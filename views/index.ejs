@@ -1,0 +1,6 @@
+<%- include('includes/header'); %>
+    <h2>Dokument</h2>
+    <% docs.forEach(function(doc){ %>
+        <h3><a href="/<%= doc.id %>"><%= doc.title %></a></h3>
+    <% }); %>
+<%- include('includes/footer'); %>
