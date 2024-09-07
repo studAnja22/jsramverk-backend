@@ -1,11 +1,12 @@
 <%- include('includes/header'); %>
-    <h2>Dokument</h2>
-    <form method="POST" action="/" class="new-doc">
+<a href="/"><h2>Dokument</h2></a>
+    <form method="POST" action="/update" class="new-doc">
+        <input type="hidden" name="id" value="<%= id %>" />
         <label for="title">Titel</label>
-        <input type="text" name="title" value="<%= doc.title %>" />
+        <input type="text" name="title" value="<%= docs && docs.title ? docs.title : 'Default Title' %>" />
 
         <label for="content">Innehåll</label>
-        <textarea name="content"><%= doc.content %></textarea>
+        <textarea name="content"><%= docs && docs.content ? docs.content : 'Default Content' %></textarea>
 
         <input type="submit" value="Uppdatera" />
     </form>
