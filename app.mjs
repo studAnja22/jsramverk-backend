@@ -49,7 +49,9 @@ app.get('/:id', async (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-    return res.render("index", { docs: await documents.getAll() });
+    // return res.render("index", { docs: await documents.getAll() });
+    console.log("Hello :)");
+    
 });
 
 app.listen(port, () => {
