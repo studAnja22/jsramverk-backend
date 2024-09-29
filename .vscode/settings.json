@@ -1,8 +1,0 @@
-{
-    "appService.zipIgnorePattern": [
-        "node_modules{,/**}",
-        ".vscode{,/**}"
-    ],
-    "appService.defaultWebAppToDeploy": "/subscriptions/b4fc9717-b9ff-4743-8656-0e28688e1d2c/resourceGroups/DIDA-ANJA22-DV1677-H24-LP1/providers/Microsoft.Web/sites/jsramverk-anja22",
-    "appService.deploySubpath": "."
-}
