@@ -9,7 +9,7 @@ const documents = {
         try {
             return await db.collection.find().toArray();
         } catch (e) {
-            console.error(e);
+            console.error("Error during getAll operation:", e);
 
             return [];
         } finally {
@@ -25,7 +25,7 @@ const documents = {
         try {
             return await db.collection.findOne(documentId);
         } catch (e) {
-            console.error(e);
+            console.error("Error during getOne operation:", e);
             return {};
         } finally {
             await db.client.close();
@@ -44,7 +44,7 @@ const documents = {
         try {
             return await db.collection.insertOne(body);
         } catch (e) {
-            console.error(e);
+            console.error("Error during addOne operation:", e);
         } finally {
             await db.client.close();
         }
@@ -61,15 +61,30 @@ const documents = {
             },
         };
 
-        const result = await db.collection.updateOne(
-            filter,
-            updateDocument,
-        );
-
         try {
+            const result = await db.collection.updateOne(
+                filter,
+                updateDocument,
+            );
+
             return result;
         } catch (e) {
-            console.error(e);
+            console.error("Error during updateOne operation:", e);
+        } finally {
+            await db.client.close();
+        }
+    },
+    // deletes a document with the id
+    deleteOne: async function deleteOne(id) {
+        let db = await database.getDb();
+        const filter = { _id: ObjectId.createFromHexString(id) };
+
+        try {
+            const result = await db.collection.deleteOne(filter);
+
+            return result;
+        } catch (e) {
+            console.error("Error during deleteOne operation:", e);
         } finally {
             await db.client.close();
         }

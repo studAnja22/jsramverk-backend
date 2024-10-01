@@ -2,6 +2,7 @@ import express from 'express';
 const router = express.Router();
 
 import documents from "../models/docs.mjs";
+
 // Get all documents
 router.get('/', async (req, res) => {
     const docs = await documents.getAll();
@@ -33,6 +34,15 @@ router.post("/update", async (req, res) => {
 
     return res.redirect(`/${documentId}`);
     // return res.redirect(`/posts/${documentId}`);// for postman
+});
+
+// delete a document
+router.post("/delete/:id", async (req, res) => {
+    const id = req.params.id;
+
+    await documents.deleteOne(id);
+
+    return res.redirect("/");
 });
 
 export default router;
