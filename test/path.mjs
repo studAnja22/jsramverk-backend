@@ -9,11 +9,25 @@ const request = chai.request;
 
 chai.should();
 
-describe('Reports', () => {
+describe('Landing page', () => {
     describe('GET /', () => {
         it('200 HAPPY PATH getting base', (done) => {
             request.execute(server)
                 .get("/")
+                .end((err, res) => {
+                    res.should.have.status(200);
+
+                    done();
+                });
+        });
+    });
+});
+
+describe('Secret greeting', () => {
+    describe('GET /hello', () => {
+        it('200 HAPPY PATH get secret greeting', (done) => {
+            request.execute(server)
+                .get("/hello")
                 .end((err, res) => {
                     res.should.have.status(200);
 
