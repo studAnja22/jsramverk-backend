@@ -45,7 +45,7 @@ app.use("/posts", posts);
 app.use("/testRoutes", testRoutes);
 app.use("/hello", hello);
 
-app.get("/", (req, res) => res.send("Hello world!"));
+app.get("/", (req, res) => res.send({ message: "Hello world!" }));
 
 /**------- Error handlers -------*/
 // Add routes for 404 and error handling

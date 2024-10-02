@@ -12,7 +12,6 @@ router.get('/', async (req, res) => {
     } catch (e) {
         console.error("Error trying to fetch documents:", e);
     }
-    
 });
 
 // Adds a new document to the database
