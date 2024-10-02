@@ -4,7 +4,7 @@
   "description": "Starter project for DV1677 JSRamverk",
   "main": "index.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "nyc --reporter=html --reporter=text --reporter=clover mocha --exit --timeout 10000",
     "start": "nodemon app.mjs",
     "production": "NODE_ENV='production' nodemon app.mjs",
     "lint": "eslint ."
