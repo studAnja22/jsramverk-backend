@@ -6,12 +6,11 @@ const database = {
     getDb: async function getDb () {
         let dsn = `mongodb+srv://${process.env.DB_MONGO}:${process.env.DB_PASS}@text-editor.azo43.mongodb.net/?retryWrites=true&w=majority&appName=text-editor`;
 
-            console.log("dsn", dsn);
-            
-
         if (process.env.NODE_ENV === 'test') {
             dsn = "mongodb://localhost:27017/test";
         }
+
+        console.log("dsn after if statement", dsn);
 
         const client = new MongoClient(dsn, {
             serverApi: {

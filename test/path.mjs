@@ -36,3 +36,17 @@ describe('Secret greeting', () => {
         });
     });
 });
+
+describe('document path', () => {
+    describe('GET /posts', () => {
+        it('200 HAPPY PATH', (done) => {
+            request.execute(server)
+                .get("/posts")
+                .end((err, res) => {
+                    res.should.have.status(200);
+
+                    done();
+                });
+        });
+    });
+});
