@@ -7,7 +7,7 @@ const database = {
         let dsn = `mongodb+srv://${process.env.DB_MONGO}:${process.env.DB_PASS}@text-editor.azo43.mongodb.net/?retryWrites=true&w=majority&appName=text-editor`;
 
         if (process.env.NODE_ENV === 'test') {
-            dsn = "mongodb://localhost:27017/test";
+            dsn = "mongodb://mongodb:27017/test";
         }
 
         console.log("dsn:", dsn);

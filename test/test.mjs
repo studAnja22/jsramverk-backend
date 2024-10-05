@@ -49,7 +49,7 @@ describe('POST /posts - Add a new document', () => {
         content: "Creative content."
     };
     // Add the new document to the database
-    const res = await chai.request.execute(server)
+    const res = await request.execute(server)
         .post("/posts")
         .send(document)
         .expect(201);
