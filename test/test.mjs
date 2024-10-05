@@ -41,35 +41,38 @@ describe('Reset the test-database', () => {
         });
 });
 
-//Check the POST route - ADD a new document
+// Check the POST route - ADD a new document
 describe('POST /posts - Add a new document', () => {
-    it('Should add a new document and return 201 status', async (done) => {
+    it('Should add a new document and return 201 status', async () => {
         const document = {
         title: "Awesome title",
         content: "Creative content."
     };
-
-    await request.execute(server)
+    // Add the new document to the database
+    const res = await request.execute(server)
         .post("/posts")
-        .send(document)
-        .end((err, res) => {
-            res.should.have.status(201);
-            res.body.should.have.property('message').eql('Document added successfully');
-            res.body.should.have.property('document');
-            res.body.document.should.have.property('_id');
-            res.body.document.should.have.property('title').eql(document.title);
-            res.body.document.should.have.property('content').eql(document.content);
-            done();
-        });
+        .send(document);
+
+    //Assertion
+    res.should.have.status(201);
+    res.body.should.have.property('message').eql('Document added successfully');
+    res.body.should.have.property('document');
+    res.body.document.should.have.property('_id');
+    res.body.document.should.have.property('title').eql(document.title);
+    res.body.document.should.have.property('content').eql(document.content);
     });
 });
 // Check GET route. can we get the document we added by id?
 describe('GET /posts/:id - Get document with id', () => {
-    it('Should return document with id with status 200', async (done) => {
+    it('Should return document with id with status 200', async () => {
         const db = await database.getDb();
         const documents = await db.collection.find({}).toArray();
 
         const firstDocument = documents[0];
+
+        if (!firstDocument) {
+            throw new Error('Database empty. No document to be updated');
+        }
 
         firstDocument.should.exist;
         firstDocument.should.have.property('_id');
@@ -81,63 +84,69 @@ describe('GET /posts/:id - Get document with id', () => {
         const documentTitle = firstDocument.title;
         const documentContent = firstDocument.content;
 
-
-    request.execute(server)
-        .get(`/posts/${documentId}`)
-        .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.have.property('_id').eql(`${documentId}`);
-            res.body.should.have.property('title').eql(`${documentTitle}`);
-            res.body.should.have.property('content').eql(`${documentContent}`);
-            res.body.should.be.a('object');
-            done();
-        });
+        // Get document with the id
+        const res = await chai.request(server)
+            .get(`/posts/${documentId}`);
+        
+        // Assertion
+        res.should.have.status(200);
+        res.body.should.have.property('_id').eql(`${documentId}`);
+        res.body.should.have.property('title').eql(`${documentTitle}`);
+        res.body.should.have.property('content').eql(`${documentContent}`);
+        res.body.should.be.a('object');
     });
 });
 // Check POST route - UPDATE. can we update the document we added by id?
 describe('POST /posts/update - Update the document by id', () => {
-    it('Should update the document with new content and return status 200', async (done) => {
+    it('Should update the document with new content and return status 200', async () => {
         const db = await database.getDb();
         const documents = await db.collection.find({}).toArray();
         const firstDocument = documents[0];
-        const documentId = firstDocument._id;
+
+        if (!firstDocument) {
+            throw new Error('Database empty. No document to be updated');
+        }
+        const documentId = firstDocument._id.toHexString();
 
         const updatedDocument = {
             _id: documentId,
             title: "A significantly better title",
             content: "Simply the best content"
         };
+        // Update the document
+        const res = await chai.request(server)
+            .post(`/posts/update`)
+            .send(updatedDocument);
 
-        request.execute(server)
-        .post(`/posts/update`)
-        .send(updatedDocument)
-        .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.have.property('message').eql('Document updated successfully');
-            res.body.should.have.property('_id').eql(`${documentId}`);
-            res.body.should.have.property('title').eql(`${updatedDocument.title}`);
-            res.body.should.have.property('content').eql(`${updatedDocument.content}`);
-            res.body.should.be.a('object');
-            done();
-        });
+        // Assertion
+        res.should.have.status(200);
+        res.body.should.have.property('message').eql('Document updated successfully');
+        res.body.should.have.property('_id').eql(`${documentId}`);
+        res.body.should.have.property('title').eql(`${updatedDocument.title}`);
+        res.body.should.have.property('content').eql(`${updatedDocument.content}`);
+        res.body.should.be.a('object');
+
     });
 });
 // Check DELETE route. Can we destroy what we've created by id?
 describe('DELETE /posts/delete', () => {
-    it('Should delete the document and return status 200', async (done) => {
+    it('Should delete the document and return status 200', async () => {
         const db = await database.getDb();
         const documents = await db.collection.find({}).toArray();
         const firstDocument = documents[0];
-        const documentId = firstDocument._id;
 
-        request.execute(server)
-        .delete(`/posts/delete`)
-        .send(documentId)
-        .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.have.property('message').eql('Document deleted successfully');
-            res.body.should.have.property('id').eql(documentId);
-            done();
-        });
+        if (!firstDocument) {
+            throw new Error('Database empty. No document to be deleted');
+        }
+        const documentId = firstDocument._id.toHexString();
+
+        // Destroy the document once and for all
+        const res = await chai.request(server)
+            .delete(`/posts/delete/${documentId}`);
+
+        // Assertion
+        res.should.have.status(200);
+        res.body.should.have.property('message').eql('Document deleted successfully');
+        res.body.should.have.property('id').eql(documentId);
     });
 });
