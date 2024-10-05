@@ -1,43 +1,49 @@
-// /* global it describe before */
+/* global it describe before */
 
-// process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = 'test';
 
-// import * as chaiModule from "chai";
-// import chaiHttp from 'chai-http/index.js';
-// import server from "../app.mjs";
+import * as chaiModule from "chai";
+import chaiHttp from 'chai-http/index.js';
+import server from "../app.mjs";
 
-// const chai = chaiModule.use(chaiHttp);
-// const request = chai.request;
+const chai = chaiModule.use(chaiHttp);
+const request = chai.request;
 
-// chai.should();
+chai.should();
 
-// import database from "../db/database.mjs";
+import database from "../db/database.mjs";
 
-// // Reset the database
-// describe('Reset the test-database', () => {
-//     before(async () => {
-//         const db = await database.getDb();
-
-//         try {
-//             const collections = await db.db.listCollections().toArray();
-
-//             // Drop all the collections in the database
-//             await Promise.all(collections.map(async (collection) => {
-//                 await db.db.collection(collection.name).drop();
-//             }));
-
-//             // Assert the database is empty
-//             const emptyDatabase = await db.db.listCollections().toArray();
-//             emptyDatabase.should.be.empty;
-//         } catch (e) {
-//             console.error(e);
-//             throw e;
-//         } finally {
-//             await db.client.close();
-//         }
-//     });
-
-// });
+// Reset the database
+describe('Reset the test-database', () => {
+    before(() => {
+        return database.getDb()
+            .then(db => {
+                return db.db.listCollections().toArray()
+                    .then(collections => {
+                        return Promise.all(collections.map(collection => {
+                            return db.db.collection(collection.name).drop();
+                        }));
+                    })
+                    .then(() => {
+                        return db.db.listCollections().toArray()
+                            .then(emptyDatabase => {
+                                emptyDatabase.should.be.empty;
+                            });
+                    })
+                    .catch(e => {
+                        console.error(e);
+                        throw e;
+                    })
+                    .finally(() => {
+                        db.client.close();
+                    });
+            })
+            .catch(e => {
+                console.error("Unable to connect to database: ", e);
+                throw e;
+            });
+    });
+});
 
 
 
