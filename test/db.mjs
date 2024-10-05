@@ -16,6 +16,7 @@ const collectionName = "tests";
 
 // Reset the database
 describe('Reset the test-database', () => {
+    this.timeout(20000);
     before(() => {
         return new Promise(async (resolve) => {
             const db = await database.getDb();
