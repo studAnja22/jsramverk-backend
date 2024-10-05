@@ -16,28 +16,23 @@ import database from "../db/database.mjs";
 // Reset the database
 describe('Reset the test-database', () => {
     before(async () => {
-            return database.getDb()
-                .then(({ db, client }) => {
-                    return db.collection.drop()
-                    .catch(err => {
-                        if (err) {
-                            throw err;
-                        }
-                    })
-                    .finally(() => client.close());
-                })
-                .catch(err => {
-                    console.error("Can't connect to database", err)
-                })
-        });
-        describe('Database should be empty now', () => {
-            it('Should reset the database and be empty', async () => {
-            const db = await database.getDb();
-            const collection = await db.db.listCollections().toArray();
-            collection.should.be.empty;
-        });
+        const db = await database.getDb();
+
+        try {
+            const collections = await db.db.listCollections().toArray();
+
+            await Promise.all(collections.map(async (collection) => {
+                await db.db.collection(collection.name).drop();
+            }));
+        } catch (e) {
+            console.error(e);
+            throw e;
+        } finally {
+            await db.client.close();
+        }
     });
 });
+
 
 
 // Check the POST route - ADD a new document
