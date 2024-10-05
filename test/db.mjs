@@ -21,9 +21,14 @@ describe('Reset the test-database', () => {
         try {
             const collections = await db.db.listCollections().toArray();
 
+            // Drop all the collections in the database
             await Promise.all(collections.map(async (collection) => {
                 await db.db.collection(collection.name).drop();
             }));
+
+            // Assert the database is empty
+            const emptyDatabase = await db.db.listCollections().toArray();
+            emptyDatabase.should.be.empty;
         } catch (e) {
             console.error(e);
             throw e;
@@ -31,6 +36,7 @@ describe('Reset the test-database', () => {
             await db.client.close();
         }
     });
+
 });
 
 
