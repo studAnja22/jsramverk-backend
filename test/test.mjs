@@ -49,7 +49,7 @@ describe('POST /posts - Add a new document', () => {
         content: "Creative content."
     };
     // Add the new document to the database
-    const res = await request.execute(server)
+    const res = await chai.request.execute(server)
         .post("/posts")
         .send(document)
         .expect(201);
@@ -86,7 +86,7 @@ describe('GET /posts/:id - Get document with id', () => {
         const documentContent = firstDocument.content;
 
         // Get document with the id
-        const res = await request(server)
+        const res = await chai.request(server)
             .get(`/posts/${documentId}`)
             .expect(200);
         
@@ -115,7 +115,7 @@ describe('POST /posts/update - Update the document by id', () => {
             content: "Simply the best content"
         };
         // Update the document
-        const res = await request(server)
+        const res = await chai.request(server)
             .post(`/posts/update`)
             .send(updatedDocument)
             .expect(200);
@@ -142,7 +142,7 @@ describe('DELETE /posts/delete', () => {
         const documentId = firstDocument._id.toHexString();
 
         // Destroy the document once and for all
-        const res = await request(server)
+        const res = await chai.request(server)
             .delete(`/posts/delete/${documentId}`)
             .expect(200);
 
