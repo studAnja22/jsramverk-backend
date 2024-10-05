@@ -18,7 +18,17 @@ jobs:
       matrix:
         node-version: [18.x, 20.x, 22.x]
         mongodb-version: ['4.2', '4.4', '5.0']
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    services:
+      mongodb:
+        image: mongo:${{ matrix.mongodb-version }}
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - uses: actions/checkout@v4
