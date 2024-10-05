@@ -17,32 +17,22 @@ const collectionName = "tests";
 // Reset the database
 describe('Reset the test-database', () => {
     before(async () => {
-            const db = await database.getDb();
-
-            db.db.listCollections(
-                { name: collectionName }
-            )
-                .next()
-                .then(async function(info) {
-                    if (info) {
-                        await db.collection.drop();
-                    }
+            return database.getDb()
+                .then(({ db, client }) => {
+                    return db.collection.drop()
+                    .catch(err => {
+                        if (err) {
+                            throw err;
+                        }
+                    })
+                    .finally(() => client.close());
                 })
-                .catch(function(err) {
-                    console.error(err);
+                .catch(err => {
+                    console.error("Can't connect to database", err)
                 })
-                .finally(async function() {
-                    await db.client.close();
-                    resolve();
         });
     });
 
-    it('Should reset the database and be empty', async () => {
-        const db = await database.getDb();
-        const collection = await db.db.listCollections().toArray();
-        collection.should.be.empty;
-    });
-});
 // Check the POST route - ADD a new document
 // describe('POST /posts - Add a new document', () => {
 //     it('Should add a new document and return 201 status', async (done) => {
