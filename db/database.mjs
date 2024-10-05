@@ -10,7 +10,7 @@ const database = {
             dsn = "mongodb://localhost:27017/test";
         }
 
-        console.log("dsn after if statement", dsn);
+        console.log("dsn:", dsn);
 
         const client = new MongoClient(dsn, {
             serverApi: {
@@ -19,13 +19,20 @@ const database = {
             deprecationErrors: true,
             }
         });
-        const db = await client.db();
-        const collection = await db.collection("documents");
 
-        return {
-            collection: collection,
-            client: client,
-        };
+        try {
+            await client.connect()
+            const db = client.db();
+            const collection = db.collection("documents");
+
+            return {
+                collection: collection,
+                client: client,
+            };
+        } catch (e) {
+            console.error("Unable to connect to database", e)
+            throw e;
+        }
     }
 };
 
