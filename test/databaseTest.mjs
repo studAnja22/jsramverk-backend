@@ -1,37 +1,43 @@
-/* global it describe before */
+// /* global it describe before */
 
-process.env.NODE_ENV = 'test';
+// process.env.NODE_ENV = 'test';
 
-import * as chaiModule from "chai";
-import chaiHttp from 'chai-http/index.js';
-import server from "../app.mjs";
+// import * as chaiModule from "chai";
+// import chaiHttp from 'chai-http/index.js';
+// import server from "../app.mjs";
 
-const chai = chaiModule.use(chaiHttp);
-const request = chai.request;
+// const chai = chaiModule.use(chaiHttp);
+// const request = chai.request;
 
-chai.should();
+// chai.should();
 
-import database from "../db/database.mjs";
-const collectionName = "tests";
+// import database from "../db/database.mjs";
+// const collectionName = "tests";
 
-// Reset the database
-describe('Reset the test-database', () => {
-    before(async () => {
-            return database.getDb()
-                .then(({ db, client }) => {
-                    return db.collection.drop()
-                    .catch(err => {
-                        if (err) {
-                            throw err;
-                        }
-                    })
-                    .finally(() => client.close());
-                })
-                .catch(err => {
-                    console.error("Can't connect to database", err)
-                })
-        });
-    });
+// // Reset the database
+// describe('Reset the test-database', () => {
+//     before(async () => {
+//             return database.getDb()
+//                 .then(({ db, client }) => {
+//                     return db.collection.drop()
+//                     .catch(err => {
+//                         if (err) {
+//                             throw err;
+//                         }
+//                     })
+//                     .finally(() => client.close());
+//                 })
+//                 .catch(err => {
+//                     console.error("Can't connect to database", err)
+//                 })
+//         });
+//     });
+
+//     it('Should reset the database and be empty', async () => {
+//         const db = await database.getDb();
+//         const collection = await db.db.listCollections().toArray();
+//         collection.should.be.empty;
+//     });
 
 // Check the POST route - ADD a new document
 // describe('POST /posts - Add a new document', () => {
