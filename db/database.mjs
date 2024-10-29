@@ -8,7 +8,7 @@ const database = {
 
         if (process.env.NODE_ENV === 'test') {
             // dsn = "mongodb://localhost:27017/test";
-            dsn = "mongodb://0.0.0.0:27017/test";
+            dsn = "mongodb://0.0.0.0:27017/";
         }
 
         console.log("dsn:", dsn);
