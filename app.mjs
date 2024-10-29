@@ -85,9 +85,46 @@ app.use((err, req, res, next) => {
     });
 });
 
+/**------- Sockets (new rows (77-114) created by Emelie) -------*/
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
+
+const httpServer = createServer(app);
+
+const io = new Server(httpServer, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"]
+    }
+});
+
+let timeout;
+
+io.on('connection', (socket) => {
+    socket.on("join_room", (room) => {
+        socket.join(room);
+    });
+
+    socket.on("content", (data) => {
+        //io.emit("content", data);
+        io.to(data["_id"]).emit("content", data);
+
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+            console.log("spara data");
+            documents.updateOne(data);
+        }, 2000);
+    });
+
+    socket.on('disconnect', () => {
+        console.log("Disconnected");
+    });
+});
+
 /**------- Start up server -------*/
-const server = app.listen(port, () => {
+httpServer.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 });
 
-export default server;
+export default httpServer;
