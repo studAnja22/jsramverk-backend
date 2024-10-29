@@ -7,7 +7,8 @@ const database = {
         let dsn = `mongodb+srv://${process.env.DB_MONGO}:${process.env.DB_PASS}@text-editor.azo43.mongodb.net/?retryWrites=true&w=majority&appName=text-editor`;
 
         if (process.env.NODE_ENV === 'test') {
-            dsn = "mongodb://localhost:27017/test";
+            // dsn = "mongodb://localhost:27017/test";
+            dsn = "mongodb://0.0.0.0:27017/test";
         }
 
         console.log("dsn:", dsn);
@@ -23,14 +24,16 @@ const database = {
         try {
             await client.connect()
             const db = client.db();
-            const collection = db.collection("documents");
+            const documents = db.collection("documents");
+            const users = db.collection("users");
 
             return {
-                collection: collection,
+                documents: documents,
+                users: users,
                 client: client,
             };
         } catch (e) {
-            console.error("Unable to connect to database", e)
+            console.error("Unable to connect to database", e);
             throw e;
         }
     }

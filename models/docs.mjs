@@ -2,12 +2,12 @@ import database from '../db/database.mjs';
 import { ObjectId } from 'mongodb';
 
 const documents = {
-    // Gets all documents in the collection
+    // Gets all documents in the documents collection
     getAll: async function getAll() {
         let db = await database.getDb();
 
         try {
-            return await db.collection.find().toArray();
+            return await db.documents.find().toArray();
         } catch (e) {
             console.error("Error during getAll operation:", e);
 
@@ -23,7 +23,7 @@ const documents = {
         const documentId = { _id: ObjectId.createFromHexString(id)};
 
         try {
-            return await db.collection.findOne(documentId);
+            return await db.documents.findOne(documentId);
         } catch (e) {
             console.error("Error during getOne operation:", e);
             return {};
@@ -32,7 +32,7 @@ const documents = {
         }
     },
     /**
-     * Insert a new document into the collection.
+     * Insert a new document into the documents collection.
      * @param {Object} body - The document data.
      * @param {string} body.title - The title of the document.
      * @param {string} body.content - The content of the document.
@@ -42,7 +42,7 @@ const documents = {
         let db = await database.getDb();
 
         try {
-            return await db.collection.insertOne(body);
+            return await db.documents.insertOne(body);
         } catch (e) {
             console.error("Error during addOne operation:", e);
         } finally {
@@ -62,7 +62,7 @@ const documents = {
         };
 
         try {
-            const result = await db.collection.updateOne(
+            const result = await db.documents.updateOne(
                 filter,
                 updateDocument,
             );
@@ -80,7 +80,7 @@ const documents = {
         const filter = { _id: ObjectId.createFromHexString(id) };
 
         try {
-            const result = await db.collection.deleteOne(filter);
+            const result = await db.documents.deleteOne(filter);
 
             return result;
         } catch (e) {

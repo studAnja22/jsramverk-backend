@@ -8,8 +8,13 @@ import path from 'path';
 import morgan from 'morgan';
 import cors from 'cors';
 
+//**----models import ------*/
+import auth from './models/auth.mjs';
+
 /**------- Routes import -------*/
 import posts from "./routes/posts.mjs";//document routes
+import users from './routes/usersRoutes.mjs';//user routes
+import authRoutes from "./routes/authRoutes.mjs"; //auth routes
 import testRoutes from "./routes/testRoutes.mjs";
 import hello from "./routes/hello.mjs";
 
@@ -35,16 +40,23 @@ if (process.env.NODE_ENV !== 'test') {
 
 /**-- Middleware - called for all routes --*/
 app.use((req, res, next) => {
-    console.log(req.method);
-    console.log(req.path);
-    next();
+    const publicRoutes = ["/", "/auth/login", "/auth"];
+
+    //No token check for public routes
+    if (publicRoutes.includes(req.path)) {
+        return next();
+    }
+    //Check for token on all other routes.
+    auth.checkToken(req, res, next);
 });
 
 /**------- Active Routes -------*/
 app.use("/posts", posts);
+app.use("/users", users);
+app.use("/auth", authRoutes);
+
 app.use("/testRoutes", testRoutes);
 app.use("/hello", hello);
-
 app.get("/", (req, res) => res.send({ message: "Hello world!" }));
 
 /**------- Error handlers -------*/
