@@ -23,7 +23,8 @@
     "graphql": "^15.3.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.9.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
@@ -36,5 +37,9 @@
     "mocha": "^10.7.3",
     "nodemon": "^3.1.7",
     "nyc": "^17.1.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.8",
+    "utf-8-validate": "^6.0.4"
   }
 }

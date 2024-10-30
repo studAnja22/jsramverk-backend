@@ -47,7 +47,8 @@ app.use((req, res, next) => {
         return next();
     }
     //Check for token on all other routes.
-    auth.checkToken(req, res, next);
+    // auth.checkToken(req, res, next); //Closed for dev
+    next();
 });
 
 /**------- Active Routes -------*/
