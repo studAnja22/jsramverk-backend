@@ -11,6 +11,10 @@ import cors from 'cors';
 //**----models import ------*/
 import auth from './models/auth.mjs';
 
+/**---- Socket imports */
+import initSocket from './socket/socket.mjs';
+import { createServer } from 'node:http';
+
 /**------- Routes import -------*/
 import posts from "./routes/posts.mjs";//document routes
 import users from './routes/usersRoutes.mjs';//user routes
@@ -85,47 +89,14 @@ app.use((err, req, res, next) => {
         ]
     });
 });
-
-/**------- Sockets (new rows (77-114) created by Emelie) -------*/
-import { createServer } from 'node:http';
-import { Server } from 'socket.io';
-
+/**----- Initialize Socket.io ----- */
 const httpServer = createServer(app);
 
-const io = new Server(httpServer, {
-    cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST"]
-    }
-});
-
-let timeout;
-
-io.on('connection', (socket) => {
-    socket.on("join_room", (room) => {
-        socket.join(room);
-    });
-
-    socket.on("content", (data) => {
-        //io.emit("content", data);
-        io.to(data["_id"]).emit("content", data);
-
-        clearTimeout(timeout);
-
-        timeout = setTimeout(() => {
-            console.log("spara data");
-            documents.updateOne(data);
-        }, 2000);
-    });
-
-    socket.on('disconnect', () => {
-        console.log("Disconnected");
-    });
-});
+initSocket(httpServer);
 
 /**------- Start up server -------*/
-httpServer.listen(port, () => {
+const server = httpServer.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 });
 
-export default httpServer;
+export default server;

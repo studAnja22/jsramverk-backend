@@ -5,8 +5,9 @@
   "main": "index.mjs",
   "scripts": {
     "test": "nyc --reporter=html --reporter=text --reporter=clover mocha --exit --timeout 10000",
-    "start": "nodemon app.mjs",
-    "production": "NODE_ENV='production' nodemon app.mjs",
+    "start": "node app.mjs",
+    "dev": "nodemon app.mjs",
+    "production": "NODE_ENV='production' node app.mjs",
     "lint": "eslint ."
   },
   "keywords": [],
