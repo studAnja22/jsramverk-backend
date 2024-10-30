@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 const jwtSecret = process.env.JWT_SECRET;
 
 const auth = {
+    token: "",
     login: async function login(body) {
         const userInputEmail = body.email;
         const userInputPassword = body.password;
@@ -64,6 +65,7 @@ const auth = {
             const secret = jwtSecret;
 
             const token = jwt.sign(payload, secret, { expiresIn: '1h'});
+            auth.token = token;
 
             return {
                 data: {
