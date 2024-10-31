@@ -2,11 +2,23 @@ import express from 'express';
 const router = express.Router();
 
 import documents from "../models/docs.mjs";
+import auth from '../models/auth.mjs';
 
 // Get all documents
 router.get('/', async (req, res) => {
     try {
         const docs = await documents.getAll();
+
+        return res.json(docs);
+    } catch (e) {
+        console.error("Error trying to fetch documents:", e);
+    }
+});
+
+// Get user documents
+router.get('/get_documents', async (req, res) => {
+    try {
+        const docs = await documents.getUsersDocuments();
 
         return res.json(docs);
     } catch (e) {
@@ -32,16 +44,20 @@ router.post("/", async (req, res) => {
     }
 });
 
-//Get user documents
-router.get('/get_documents', async (req, res) => {
-    try {
-        const docs = await documents.getUsersDocuments();
-
-        return res.json(docs);
-    } catch (e) {
-        console.error("Error trying to fetch documents:", e);
+// Get jwt token
+router.get("/token", (req, res) => {
+    if (auth.token) {
+        return res.json({
+            message: "Token found",
+            token: auth.token
+        });
     }
-});
+
+    return res.status(404).json({
+        message: "Token not found",
+        token: ""
+    });
+})
 
 // Get one document
 router.get('/:id', async (req, res) => {
