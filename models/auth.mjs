@@ -117,6 +117,9 @@ const auth = {
 
         //No Token
         if (!token) {
+            //Ensure these are empty
+            auth.token = "";
+            auth.user = "";
             return res.status(401).json({
                 errors: {
                     status: 401,

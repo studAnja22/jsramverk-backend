@@ -17,6 +17,25 @@ const documents = {
             await db.client.close();
         }
     },
+    getUsersDocuments: async function getUsersDocuments() {
+        let db = await database.getDb();
+
+        try {
+            return await db.documents.find({
+            $or: [
+                { owner: auth.user },
+                { allowed_users: auth.user }
+                ]
+            }).toArray();
+        } catch (e) {
+            console.error("Error during getUsersDocuments operation:", e);
+
+            return [];
+        } finally {
+            await db.client.close();
+        }
+        
+    },
     // finds and returns the document with id
     getOne: async function getOne(id) {
         let db = await database.getDb();
