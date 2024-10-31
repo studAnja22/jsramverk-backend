@@ -59,6 +59,40 @@ router.post("/update", async (req, res) => {
     
 });
 
+// updates an existing document in the database
+router.post("/update_collaborator", async (req, res) => {
+    try {
+        const userExists = await documents.addCollaborator(req.body);
+
+        if (userExists) {
+            return res.json({ message: "User already invited"});//User is already in allowed_users
+        }
+        const documentId = req.body["_id"];
+
+        return res.json({ message: "Collaborator has been invited to edit the document.", id: documentId });
+    } catch (e) {
+        console.error("Error trying to add collaborator:", e);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+// Removes a collaborator from allowed_users
+router.delete("/remove_collaborator", async (req, res) => {
+    try {
+        const userExists = await documents.removeCollaborator(req.body);
+
+        if (!userExists) {
+            return res.status(404).json({ message: "User not found in this collaboration"});//user not in allowed_users
+        }
+        const documentId = req.body["_id"];
+
+        return res.json({ message: "User has been removed from document.", id: documentId });
+    } catch (e) {
+        console.error("Error trying to remove collaborator:", e);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
 // delete a document
 router.post("/delete/:id", async (req, res) => {
     try {

@@ -65,7 +65,7 @@ const documents = {
             await db.client.close();
         }
     },
-    // Updates one document
+    // Updates one title and content of a document
     updateOne: async function updateOne(body) {
         let db = await database.getDb();
 
@@ -101,6 +101,86 @@ const documents = {
             return result;
         } catch (e) {
             console.error("Error during deleteOne operation:", e);
+        } finally {
+            await db.client.close();
+        }
+    },
+    // Adds a user to the document. body.email, body._id
+    addCollaborator: async function addCollaborator(body) {
+        const db = await database.getDb();
+        const filter = { _id: ObjectId.createFromHexString(body["_id"]) };
+        const collaboratorEmail = body.email;
+
+        let document;
+        try {
+            document = await db.documents.findOne(filter);
+        } catch (e) {
+            console.error("Error trying to find the document", e);
+            throw new Error("Internal server Error");
+        }
+
+        const alreadyInAllowedUsers = await documents.inAllowedUsers(document, collaboratorEmail);
+
+        if (alreadyInAllowedUsers) {
+            //email is already in allowed_users
+            return true;
+        }
+
+        //Email is not among allowed_users - add it.
+        const addCollaborator = {
+            $push: { allowed_users: collaboratorEmail }
+        }
+
+        try {
+            await db.documents.updateOne(
+                filter,
+                addCollaborator,
+            );
+
+            return false;//Email was not in allowed_users and was successfully added.
+        } catch (e) {
+            console.error("Error during addCollaborator operation:", e);
+            throw new Error("Internal server Error");
+        } finally {
+            await db.client.close();
+        }
+    },
+    //Is the user in allowed_user? returns true or false
+    inAllowedUsers: async function inAllowedUsers(document, email) {
+        //User is in allowed_user. Return true.
+        if (document.allowed_users && document.allowed_users.includes(email)) {
+            return true;
+        }
+        //User is not in allowed_user. Return false.
+        return false;
+    },
+    // Removes a user from the document. body.email, body._id
+    removeCollaborator: async function removeCollaborator(body) {
+        const db = await database.getDb();
+        const filter = { _id: ObjectId.createFromHexString(body["_id"]) };
+        const document = await db.documents.findOne(filter);
+        const collaboratorEmail = body.email;
+
+        const userExists = await this.inAllowedUsers(document, collaboratorEmail);
+        if (!userExists) {
+            //user not in allowed_users
+            return false;
+        }
+        //User is in allowed_users and needs to be removed.
+        const addCollaborator = {
+            $pull: { allowed_users: collaboratorEmail }
+        }
+
+        try {
+            await db.documents.updateOne(
+                filter,
+                addCollaborator,
+            );
+
+            return true;//Email has been removed.
+        } catch (e) {
+            console.error("Error during addCollaborator operation:", e);
+            throw new Error("Internal server Error");
         } finally {
             await db.client.close();
         }
