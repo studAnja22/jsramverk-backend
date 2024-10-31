@@ -32,6 +32,17 @@ router.post("/", async (req, res) => {
     }
 });
 
+//Get user documents
+router.get('/get_documents', async (req, res) => {
+    try {
+        const docs = await documents.getUsersDocuments();
+
+        return res.json(docs);
+    } catch (e) {
+        console.error("Error trying to fetch documents:", e);
+    }
+});
+
 // Get one document
 router.get('/:id', async (req, res) => {
     try {
