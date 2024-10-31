@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 const port = process.env.PORT || 1337;;
-
+/**---- import packages ----*/
 import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
@@ -50,9 +50,8 @@ app.use((req, res, next) => {
     if (publicRoutes.includes(req.path)) {
         return next();
     }
-    //Check for token on all other routes.
-    // auth.checkToken(req, res, next); //Closed for dev
-    next();
+    //If valid token: function returns next();
+    auth.checkToken(req, res, next);
 });
 
 /**------- Active Routes -------*/
@@ -64,9 +63,8 @@ app.use("/testRoutes", testRoutes);
 app.use("/hello", hello);
 app.get("/", (req, res) => res.send({ message: "Hello world!" }));
 
-/**------- Error handlers -------*/
-// Add routes for 404 and error handling
-// Catch 404 and forward to error handler
+/**------- 404 Error handlers -------*/
+// Catch 404 and forward to Error handler
 app.use((req, res, next) => {
     var err = new Error("Not Found");
     err.status = 404;
@@ -89,6 +87,7 @@ app.use((err, req, res, next) => {
         ]
     });
 });
+
 /**----- Initialize Socket.io ----- */
 const httpServer = createServer(app);
 

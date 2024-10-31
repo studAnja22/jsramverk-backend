@@ -11,7 +11,7 @@ const database = {
             dsn = "mongodb://0.0.0.0:27017/";
         }
 
-        console.log("dsn:", dsn);
+        // console.log("dsn:", dsn);
 
         const client = new MongoClient(dsn, {
             serverApi: {

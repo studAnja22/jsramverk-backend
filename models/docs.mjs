@@ -1,4 +1,5 @@
 import database from '../db/database.mjs';
+import auth from './auth.mjs';
 import { ObjectId } from 'mongodb';
 
 const documents = {
@@ -38,13 +39,28 @@ const documents = {
      * @param {string} body.content - The content of the document.
      * @returns {Promise} The result of the insert operation.
      */
-    addOne: async function addOne(body) {
+    addOne: async function addOne(body, res) {
+        const validToken = auth.isTokenValid();
+        if (!validToken) {
+            console.error("Token is not valid.")
+            return res.status(401).json({
+                message: "Token is not valid. Cannot add document to database."
+            });;
+        }
+
         let db = await database.getDb();
+        let data = {
+            title: body.title,
+            content: body.content,
+            owner: auth.user,
+            allowed_users: [],
+        }
 
         try {
-            return await db.documents.insertOne(body);
+            return await db.documents.insertOne(data);
         } catch (e) {
             console.error("Error during addOne operation:", e);
+            return res.status(500).json({ message: "Internal Server Error" });
         } finally {
             await db.client.close();
         }

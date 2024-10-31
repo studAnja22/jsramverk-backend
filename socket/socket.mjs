@@ -1,5 +1,6 @@
 /**------- Sockets created by Emelie -------*/
 import { Server } from 'socket.io';
+import documents from '../models/docs.mjs';
 
 let timeout;
 

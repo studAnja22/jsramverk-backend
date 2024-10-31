@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 // Adds a new document to the database
 router.post("/", async (req, res) => {
     try {
-        const result = await documents.addOne(req.body);
+        const result = await documents.addOne(req.body, res);
         const documentId = result.insertedId.toString();
 
         const newDocument = await documents.getOne(documentId);
