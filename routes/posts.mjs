@@ -29,14 +29,10 @@ router.get('/get_documents', async (req, res) => {
 // Adds a new document to the database
 router.post("/", async (req, res) => {
     try {
-        const result = await documents.addOne(req.body, res);
-        const documentId = result.insertedId.toString();
-
-        const newDocument = await documents.getOne(documentId);
+        await documents.addOne(req.body, res);
 
         return res.status(201).json({
-            message: "Document added successfully",
-            document: newDocument
+            message: "Document added successfully"
         });
     } catch (e) {
         console.error("Error adding new document:", e);

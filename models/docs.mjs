@@ -83,10 +83,10 @@ const documents = {
         }
 
         try {
-            return await db.documents.insertOne(data);
+            await db.documents.insertOne(data);
         } catch (e) {
             console.error("Error during addOne operation:", e);
-            return res.status(500).json({ message: "Internal Server Error" });
+            throw new Error("Internal server Error");
         } finally {
             await db.client.close();
         }
