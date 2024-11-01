@@ -3,6 +3,7 @@ const router = express.Router();
 
 import documents from "../models/docs.mjs";
 import auth from '../models/auth.mjs';
+import { ObjectId } from 'mongodb';
 
 // Get all documents
 router.get('/', async (req, res) => {
@@ -58,13 +59,29 @@ router.get("/token", (req, res) => {
 
 // Get one document
 router.get('/:id', async (req, res) => {
-    try {
-        const docs = await documents.getOne(req.params.id);
+    const id = req.params.id;
 
-        return res.json(docs);
+    if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ 
+            message: "Invalid id format. id must be 24 characters",
+            id: id
+        });
+    }
+
+    try {
+        const foundDocument = await documents.getOne(id);
+        if (foundDocument) {
+            return res.json(foundDocument);
+        }
+        return res.status(404).json({
+            message: "Document not found", 
+            id: id 
+        });
     } catch (e) {
         console.error("Error trying to fetch document with that id:", e);
-        return res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json({ 
+            message: "Internal Server Error" 
+        });
     }
 });
 

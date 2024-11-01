@@ -47,10 +47,11 @@ const documents = {
         const documentId = { _id: ObjectId.createFromHexString(id)};
 
         try {
-            return await db.documents.findOne(documentId);
+            const foundDocument = await db.documents.findOne(documentId);
+            return foundDocument;
         } catch (e) {
             console.error("Error during getOne operation:", e);
-            return {};
+            throw new Error("Failed to retrieve document with id: ", documentId);
         } finally {
             await db.client.close();
         }
