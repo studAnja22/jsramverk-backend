@@ -49,7 +49,8 @@ router.get("/token", (req, res) => {
     if (auth.token) {
         return res.json({
             message: "Token found",
-            token: auth.token
+            token: auth.token,
+            user: auth.user
         });
     }
 
