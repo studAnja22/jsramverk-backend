@@ -45,15 +45,15 @@ if (process.env.NODE_ENV !== 'test') {
 /**-- Middleware - called for all routes --*/
 // Middleware ger token problem om man försöker gå in på en sida som inte finns om man är utloggad...
 app.use((req, res, next) => {
-    // const publicRoutes = ["/", "/auth/login", "/auth", "/users/register_user"];
+    const publicRoutes = ["/", "/auth/login", "/auth", "/users/register_user", "/posts/token"];
 
-    //No token check for public routes
-    // if (publicRoutes.includes(req.path)) {
-    //     return next();
-    // }
-    //If valid token: function returns next();
-    // auth.checkToken(req, res, next);
-    next();
+    // No token check for public routes
+    if (publicRoutes.includes(req.path)) {
+        return next();
+    }
+    // If valid token: function returns next();
+    auth.checkToken(req, res, next);
+    // next();
 });
 
 /**------- Active Routes -------*/

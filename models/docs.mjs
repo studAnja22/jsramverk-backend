@@ -107,12 +107,12 @@ const documents = {
         };
 
         try {
-            await db.documents.updateOne(
+            return await db.documents.updateOne(
                 filter,
                 updateDocument,
             );
         } catch (e) {
-            console.error("Error during updateOne operation:", e);
+            console.error("Internal server error while trying to update document");
         } finally {
             await db.client.close();
         }

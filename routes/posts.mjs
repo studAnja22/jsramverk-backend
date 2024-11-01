@@ -87,18 +87,36 @@ router.get('/:id', async (req, res) => {
 
 // updates an existing document in the database
 router.post("/update", async (req, res) => {
-    const id = req.params.id;
+    const id = req.body["_id"];
 
     try {
-        await documents.updateOne(req.body);
+        const result = await documents.updateOne(req.body);
 
-        return res.status(201).json({ 
-            message: "Document updated successfully",
-            id: id
-        });
+        //Check if we made any updates
+        const matchedCount = result.matchedCount;
+        const modifiedCount = result.modifiedCount;
+
+        if (matchedCount > 0 && modifiedCount > 0) {
+            return res.status(200).json({ 
+                message: "Document updated successfully", 
+                id: id
+            });
+        } else if (matchedCount > 0 && modifiedCount === 0) {
+            return res.status(200).json({ 
+                message: "No changes were made.", 
+                id: id
+            });
+        } else {
+            return res.status(404).json({ 
+                message: "Document was not found.", 
+                id: id
+            });
+        }
     } catch (e) {
         console.error("Error trying to update document:", e);
-        return res.status(500).json({ message: "Internal Server Error" });
+        return res.status(404).json({ 
+            message: "Invalid id"
+        });
     }
     
 });
