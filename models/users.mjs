@@ -1,5 +1,6 @@
 import database from '../db/database.mjs';
 import bcrypt from 'bcryptjs';
+import timestamp from './timestamp.mjs';
 
 const saltRounds = parseInt(process.env.SALT_ROUNDS) || 10;
 
@@ -29,12 +30,14 @@ const user = {
         //Make password super secure with bcrypt
         try {
             const hash = await bcrypt.hash(password, saltRounds);
+            const currentTime = timestamp.getCurrentTime();
 
             db = await database.getDb();
 
             let newUser = {
                 email: email,
                 password: hash,
+                account_created: currentTime
             }
 
             await db.users.insertOne(newUser);
