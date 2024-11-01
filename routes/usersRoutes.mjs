@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 // localhost:1337/users/
-router.post("/", async (req, res) => {
+router.post("/register_user", async (req, res) => {
     try {
         const result = await users.register(req.body);
 

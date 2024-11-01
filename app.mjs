@@ -44,7 +44,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 /**-- Middleware - called for all routes --*/
 app.use((req, res, next) => {
-    const publicRoutes = ["/", "/auth/login", "/auth"];
+    const publicRoutes = ["/", "/auth/login", "/auth", "/users/register_user"];
 
     //No token check for public routes
     if (publicRoutes.includes(req.path)) {
