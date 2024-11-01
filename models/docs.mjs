@@ -107,12 +107,10 @@ const documents = {
         };
 
         try {
-            const result = await db.documents.updateOne(
+            await db.documents.updateOne(
                 filter,
                 updateDocument,
             );
-
-            return result;
         } catch (e) {
             console.error("Error during updateOne operation:", e);
         } finally {

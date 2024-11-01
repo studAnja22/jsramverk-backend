@@ -87,12 +87,15 @@ router.get('/:id', async (req, res) => {
 
 // updates an existing document in the database
 router.post("/update", async (req, res) => {
+    const id = req.params.id;
+
     try {
         await documents.updateOne(req.body);
 
-        const documentId = req.body["_id"];
-
-        return res.json({ message: "Document updated successfully", id: documentId });
+        return res.status(201).json({ 
+            message: "Document updated successfully",
+            id: id
+        });
     } catch (e) {
         console.error("Error trying to update document:", e);
         return res.status(500).json({ message: "Internal Server Error" });
