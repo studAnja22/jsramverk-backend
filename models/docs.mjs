@@ -1,5 +1,6 @@
 import database from '../db/database.mjs';
 import auth from './auth.mjs';
+import timestamp from './timestamp.mjs';
 import { ObjectId } from 'mongodb';
 
 const documents = {
@@ -69,6 +70,7 @@ const documents = {
                 message: "Token is not valid. Cannot add document to database."
             });;
         }
+        const currentTime = timestamp.getCurrentTime();
 
         let db = await database.getDb();
         let data = {
@@ -76,6 +78,8 @@ const documents = {
             content: body.content,
             owner: auth.user,
             allowed_users: [],
+            created: currentTime,
+            last_update: "",
         }
 
         try {
@@ -91,11 +95,13 @@ const documents = {
     updateOne: async function updateOne(body) {
         let db = await database.getDb();
 
+        const currentTime = timestamp.getCurrentTime();
         const filter = { _id: ObjectId.createFromHexString(body["_id"]) };
         const updateDocument = {
             $set: {
                 title: body.title,
                 content: body.content,
+                last_update: currentTime,
             },
         };
 
