@@ -1,6 +1,7 @@
 import database from '../db/database.mjs';
 import bcrypt from 'bcryptjs';
 import timestamp from './timestamp.mjs';
+import auth from './auth.mjs';
 
 const saltRounds = parseInt(process.env.SALT_ROUNDS) || 10;
 
@@ -72,7 +73,87 @@ const user = {
         } finally {
             await db.client.close();
         }
-    }//Delete user and their documents??
+    },
+    deregister: async function deregister(req, res) {
+        const email = req.body.email;
+
+        //Check if user submitted email
+        if (!email) {
+            throw new Error("Error 404: Email is missing");
+        }
+
+        try {
+            // Remove all the users data
+            await user.removeFromCollaborations(email);
+            await user.removeUser(email);
+            await user.removeAllUsersDocuments(email);
+            if (res.status(200)) {
+                auth.token = "";
+                auth.user = "";
+            }
+            return res.status(200).json({ message: "User deregistered successfully." });
+        } catch (e) {
+            console.error("Error during deregistration:", error);
+            return res.status(500).json({ error: "An error occurred during deregistration." });
+        }
+    },
+    removeFromCollaborations: async function removeFromCollaborations(userEmail) {
+        let db;
+
+        try {
+            db = await database.getDb();
+
+            const filterCollaborator = {
+                allowed_users: userEmail
+            }
+            const updateCollaboration = {
+                $pull: { allowed_users: userEmail }
+            }
+
+            await db.documents.updateMany(filterCollaborator, updateCollaboration);
+        } catch (e) {
+            console.error("An error occurred while trying to remove user from all allowed_users:", e);
+            throw new Error("Internal server Error");
+        } finally {
+            await db.client.close();
+        }
+    },
+    removeUser: async function removeUser(userEmail) {
+        let db;
+
+        try {
+            db = await database.getDb();
+
+            const filterUser = {
+                email: userEmail
+            }
+
+            await db.users.deleteOne(filterUser);
+        } catch (e) {
+            console.error("An error occurred while trying to delete the user:", e);
+            throw new Error("Internal server Error");
+        } finally {
+            await db.client.close();
+        }
+    },
+    removeAllUsersDocuments: async function removeAllUsersDocuments(userEmail) {
+        let db;
+
+        try {
+            db = await database.getDb();
+
+            const filterDocuments = {
+                owner: userEmail
+            }
+
+            await db.documents.deleteMany(filterDocuments);
+        } catch (e) {
+            console.error("An error occurred while trying to delete all users documents:", e);
+            throw new Error("Internal server Error");
+        } finally {
+            await db.client.close();
+        }
+    }
 }
 
 

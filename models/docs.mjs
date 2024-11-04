@@ -63,8 +63,9 @@ const documents = {
      * @param {string} body.content - The content of the document.
      * @returns {Promise} The result of the insert operation.
      */
-    addOne: async function addOne(body, res) {
-        const validToken = auth.isTokenValid();
+    addOne: async function addOne(req, res) {
+        const validToken = auth.isTokenValid(req, res);
+
         if (!validToken) {
             console.error("Token is not valid.")
             return res.status(401).json({
@@ -75,13 +76,13 @@ const documents = {
 
         let db = await database.getDb();
         let data = {
-            title: body.title,
-            content: body.content,
+            title: req.body.title,
+            content: req.body.content,
             owner: auth.user,
             code_mode: false,
             allowed_users: [],
             created: currentTime,
-            last_update: "",
+            last_update: currentTime,
         }
 
         try {
@@ -195,14 +196,14 @@ const documents = {
             return false;
         }
         //User is in allowed_users and needs to be removed.
-        const addCollaborator = {
+        const removeCollaborator = {
             $pull: { allowed_users: collaboratorEmail }
         }
 
         try {
             await db.documents.updateOne(
                 filter,
-                addCollaborator,
+                removeCollaborator,
             );
 
             return true;//Email has been removed.

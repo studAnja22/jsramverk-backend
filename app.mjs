@@ -20,8 +20,6 @@ import posts from "./routes/posts.mjs";//document routes
 import users from './routes/usersRoutes.mjs';//user routes
 import authRoutes from "./routes/authRoutes.mjs"; //auth routes
 import sendGrid from "./routes/sendGrid.mjs" // send invites with sendgrid route
-import testRoutes from "./routes/testRoutes.mjs";
-import hello from "./routes/hello.mjs";
 
 /**------- Express settings -------*/
 const app = express();
@@ -44,14 +42,14 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 /**-- Middleware - called for all routes --*/
-// Middleware ger token problem om man försöker gå in på en sida som inte finns om man är utloggad...
 app.use((req, res, next) => {
-    const publicRoutes = ["/", "/auth/login", "/auth", "/users/register_user", "/posts/token", "sendGrid/invite_user"];
+    const publicRoutes = ["/", "/auth/login", "/auth", "/users/register_user", "/posts/token", "/sendGrid/invite_user"];
 
     // No token check for public routes
     if (publicRoutes.includes(req.path)) {
         return next();
     }
+
     // If valid token: function returns next();
     auth.checkToken(req, res, next);
     // next();
@@ -63,8 +61,6 @@ app.use("/users", users);
 app.use("/auth", authRoutes);
 app.use("/sendgrid", sendGrid);
 
-app.use("/testRoutes", testRoutes);
-app.use("/hello", hello);
 app.get("/", (req, res) => res.send({ message: "Hello world!" }));
 
 /**------- 404 Error handlers -------*/

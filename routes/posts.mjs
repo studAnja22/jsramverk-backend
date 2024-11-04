@@ -5,17 +5,6 @@ import documents from "../models/docs.mjs";
 import auth from '../models/auth.mjs';
 import { ObjectId } from 'mongodb';
 
-// Get all documents
-router.get('/', async (req, res) => {
-    try {
-        const docs = await documents.getAll();
-
-        return res.json(docs);
-    } catch (e) {
-        console.error("Error trying to fetch documents:", e);
-    }
-});
-
 // Get user documents
 router.get('/get_documents', async (req, res) => {
     try {
@@ -30,7 +19,7 @@ router.get('/get_documents', async (req, res) => {
 // Adds a new document to the database
 router.post("/", async (req, res) => {
     try {
-        await documents.addOne(req.body, res);
+        await documents.addOne(req, res);
 
         return res.status(201).json({
             message: "Document added successfully"

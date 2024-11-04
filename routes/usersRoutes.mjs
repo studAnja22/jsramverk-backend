@@ -32,5 +32,14 @@ router.post("/register_user", async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
+//Deletes the user, all their documents and removes them from any collaborations
+router.delete("/deregister_user", async (req, res) => {
+    try {
+        await users.deregister(req, res);
+    } catch (e) {
+        console.error("Error occurred while deregister the user:", e);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
 
 export default router;

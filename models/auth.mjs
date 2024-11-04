@@ -72,6 +72,8 @@ const auth = {
             auth.user = userInputEmail;
             console.log("auth token: ", auth.token);
             console.log("user: ", userInputEmail);
+            console.log("auth.user: ", auth.user);
+
             return {
                 data: {
                     type: "success",
@@ -148,10 +150,12 @@ const auth = {
             return next();
         });
     },
-    isTokenValid: function isTokenValid() {
-        if (auth.token) {
+    isTokenValid: function isTokenValid(req, res) {
+        let token = req.headers['x-access-token'];
+
+        if (token) {
             try {
-                jwt.verify(auth.token, jwtSecret);
+                jwt.verify(token, jwtSecret);
                 // Token is valid
                 return true;
             } catch (e) {
