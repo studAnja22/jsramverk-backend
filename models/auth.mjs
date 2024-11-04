@@ -164,6 +164,10 @@ const auth = {
             console.error("No token found.")
             return false;
         }
+    },
+    logout: function logout() {
+        auth.token = "";
+        auth.user = "";
     }
 }
 
