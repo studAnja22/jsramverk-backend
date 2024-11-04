@@ -85,7 +85,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// updates an existing document in the database
+// updates an existing document in the documents database
 router.post("/update", async (req, res) => {
     const id = req.body["_id"];
 
@@ -121,7 +121,7 @@ router.post("/update", async (req, res) => {
     
 });
 
-// updates an existing document in the database
+// updates and adds a user to allowed_users in the users database
 router.post("/update_collaborator", async (req, res) => {
     try {
         const userExists = await documents.addCollaborator(req.body);
@@ -130,7 +130,7 @@ router.post("/update_collaborator", async (req, res) => {
             return res.json({ message: "User already invited"});//User is already in allowed_users
         }
         const documentId = req.body["_id"];
-
+        // Send invite with sendgrid!
         return res.json({ message: "Collaborator has been invited to edit the document.", id: documentId });
     } catch (e) {
         console.error("Error trying to add collaborator:", e);

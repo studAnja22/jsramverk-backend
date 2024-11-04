@@ -19,6 +19,7 @@ import { createServer } from 'node:http';
 import posts from "./routes/posts.mjs";//document routes
 import users from './routes/usersRoutes.mjs';//user routes
 import authRoutes from "./routes/authRoutes.mjs"; //auth routes
+import sendGrid from "./routes/sendGrid.mjs" // send invites with sendgrid route
 import testRoutes from "./routes/testRoutes.mjs";
 import hello from "./routes/hello.mjs";
 
@@ -45,7 +46,7 @@ if (process.env.NODE_ENV !== 'test') {
 /**-- Middleware - called for all routes --*/
 // Middleware ger token problem om man försöker gå in på en sida som inte finns om man är utloggad...
 app.use((req, res, next) => {
-    const publicRoutes = ["/", "/auth/login", "/auth", "/users/register_user", "/posts/token"];
+    const publicRoutes = ["/", "/auth/login", "/auth", "/users/register_user", "/posts/token", "sendGrid/invite_user"];
 
     // No token check for public routes
     if (publicRoutes.includes(req.path)) {
@@ -60,6 +61,7 @@ app.use((req, res, next) => {
 app.use("/posts", posts);
 app.use("/users", users);
 app.use("/auth", authRoutes);
+app.use("/sendgrid", sendGrid);
 
 app.use("/testRoutes", testRoutes);
 app.use("/hello", hello);
