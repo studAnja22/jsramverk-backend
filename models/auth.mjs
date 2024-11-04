@@ -115,37 +115,23 @@ const auth = {
     checkToken: function checkToken(req, res, next) {
         let token = req.headers['x-access-token'];
 
-        //No Token
+        //No Token in req.headers
         if (!token) {
             //Ensure these are empty
             auth.token = "";
             auth.user = "";
-            return res.status(401).json({
-                errors: {
-                    status: 401,
-                    source: req.path,
-                    title: "No token",
-                    detail: "No token provided in request headers"
-                }
-            });
+            return false;
         }
 
         //Token exists. Lets verify it.
         jwt.verify(token, jwtSecret, function(e, decoded) {
             if (e) {
                 // not a valid token
-                return res.status(500).json({
-                    errors: {
-                        status: 500,
-                        source: req.path,
-                        title: "Failed authentication",
-                        detail: e.message
-                    }
-                });
+                return false
             }
             // Valid token proceed to next route
-            req.user = { email: decoded.email};
-            return next();
+            req.user = { email: decoded.email };
+            return true;
         });
     },
     isTokenValid: function isTokenValid() {
