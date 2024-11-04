@@ -18,7 +18,7 @@ const mail = {
         try {
             await sgMail.send(msg);
         } catch (error) {
-            console.error("SOmething happened", error)
+            console.error(error)
         }
     }
 }
