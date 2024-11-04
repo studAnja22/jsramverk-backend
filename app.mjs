@@ -53,12 +53,8 @@ app.use((req, res, next) => {
         return next();
     }
     // If valid token: function returns next();
-    const tokenResult = auth.checkToken(req, res, next);
-    // There's a token,
-    if (tokenResult) {
-        next();
-    }
-    res.redirect("/auth/login");
+    auth.checkToken(req, res, next);
+    // next();
 });
 
 /**------- Active Routes -------*/

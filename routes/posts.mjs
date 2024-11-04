@@ -43,17 +43,20 @@ router.post("/", async (req, res) => {
 
 // Get jwt token
 router.get("/token", (req, res) => {
-    if (auth.token) {
+    let token = req.headers['x-access-token'];
+    
+    if (token) {
         return res.json({
             message: "Token found",
-            token: auth.token,
+            token: token,
             user: auth.user
         });
     }
 
-    return res.status(404).json({
+    return res.status(401).json({
         message: "Token not found",
-        token: ""
+        token: "",
+        user: ""
     });
 })
 

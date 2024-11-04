@@ -78,6 +78,7 @@ const documents = {
             title: body.title,
             content: body.content,
             owner: auth.user,
+            code_mode: false,
             allowed_users: [],
             created: currentTime,
             last_update: "",
@@ -208,6 +209,52 @@ const documents = {
         } catch (e) {
             console.error("Error during addCollaborator operation:", e);
             throw new Error("Internal server Error");
+        } finally {
+            await db.client.close();
+        }
+    },
+    activateCodeMode: async function activateCodeMode(id) {
+        let db = await database.getDb();
+
+        const currentTime = timestamp.getCurrentTime();
+        const filter = { _id: ObjectId.createFromHexString(body["_id"]) };
+        const setCodeMode = {
+            $set: {
+                code_mode: true,
+                last_update: currentTime,
+            },
+        };
+
+        try {
+            return await db.documents.updateOne(
+                filter,
+                setCodeMode,
+            );
+        } catch (e) {
+            console.error("Internal server error while trying to activate code mode");
+        } finally {
+            await db.client.close();
+        }
+    },
+    deactivateCodeMode: async function deactivateCodeMode(id) {
+        let db = await database.getDb();
+
+        const currentTime = timestamp.getCurrentTime();
+        const filter = { _id: ObjectId.createFromHexString(body["_id"]) };
+        const setCodeMode = {
+            $set: {
+                code_mode: false,
+                last_update: currentTime,
+            },
+        };
+
+        try {
+            return await db.documents.updateOne(
+                filter,
+                setCodeMode,
+            );
+        } catch (e) {
+            console.error("Internal server error while trying to deactivate code mode");
         } finally {
             await db.client.close();
         }
