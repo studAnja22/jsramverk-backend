@@ -18,9 +18,9 @@ const collectionNameDocuments = "test_document";
 const collectionNameUsers = "test_user";
 let jwtToken = "";
 let oldToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkhlbGxvWW91QGVtYWlsLmNvbSIsImlhdCI6MTczMDc0MzAwMCwiZXhwIjoxNzMwNzQ2NjAwfQ.zJ29H0w1hgi7QsXiE4zaZGn80sTjnBxvq3i8leIk488";
-let db = "";
 
 describe('CRUD Operations Documents & Users', () => {
+    let db = "";
     // Reset database and setup for the tests
     before(async () => {
         //Trying to access the database
