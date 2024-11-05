@@ -12,144 +12,205 @@ const chai = chaiModule.use(chaiHttp);
 chai.should();
 
 import database from "../db/database.mjs";
-const collectionName = "test";
+import { describe } from "mocha";
 
-// Reset the database
-describe('Reset the test-database', () => {
-    before(() => {
-        return new Promise(async (resolve) => {
-            const db = await database.getDb();
+const collectionNameDocuments = "test_document";
+const collectionNameUsers = "test_user";
+let jwtToken = "";
+let oldToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkhlbGxvWW91QGVtYWlsLmNvbSIsImlhdCI6MTczMDc0MzAwMCwiZXhwIjoxNzMwNzQ2NjAwfQ.zJ29H0w1hgi7QsXiE4zaZGn80sTjnBxvq3i8leIk488";
 
-            db.db.listCollections(
-                { name: collectionName }
-            )
-                .next()
-                .then(async function(info) {
-                    if (info) {
-                        await db.collection.drop();
-                    }
-                })
-                .catch(function(err) {
-                    console.error(err);
-                })
-                .finally(async function() {
-                    await db.client.close();
-                    resolve();
-                });
+describe('CRUD Operations Documents & Users', () => {
+    // Reset database and setup for the tests
+    before(async () => {
+        let db;
+        db = await database.getDb();
+
+        try {
+            //Get all collections and drop them.
+            const collections = await db.listCollections().toArray();
+
+            for (const collectionInfo of collections) {
+                await db.collection(collectionInfo.name).drop();
+            }
+        } catch (e) {
+            console.error("Error occurred while trying to drop test collections", e);
+        }
+
+        try {
+            //Create test collections for documents and users
+            const collectionDocumentsExists = await db.listCollections({ name: collectionNameDocuments }).hasNext();
+            const collectionUsersExists = await db.listCollections({ name: collectionNameUsers }).hasNext();
+
+            if (!collectionDocumentsExists && !collectionUsersExists) {
+                await db.createCollection(collectionNameDocuments);
+                await db.createCollection(collectionNameUsers);
+            }
+        } catch (e) {
+            console.error("Error occurred while trying to create test collections", e);
+        }
+    });
+
+    describe('User Registration', () => {
+        it('Should register a new user (register_user)', async () => {
+            //Test for registering a new user
+            const test_user = {
+                email: "test@email.com",
+                password: "regularPassword"
+            }
+
+            //Register new user
+            const res = await chai.request.execute(server)
+                .post("/users/register_user")
+                .send(test_user);
+
+            //Assertion
+            res.should.have.status(201);
+
+            res.body.should.have.property("message").eql("Successfully registered new user.");
+        });
+
+        it('Should fail if email already registered (register_user)', async () => {
+            // Test for error handling duplicate registration
+            const test_user = {
+                email: "test@email.com",
+                password: "regularPassword"
+            }
+
+            //Register the same user twice
+            const res = await chai.request.execute(server)
+                .post("/users/register_user")
+                .send(test_user);
+
+            //Assertion
+            res.should.have.status(400);
+
+            res.body.should.have.property("message").eql("Email already in use");
+        });
+
+        it('Should fail if no password is provided (login)', async () => {
+            //Test for error handling for missing parameter
+            const test_user = {
+                email: "test@email.com",
+                password: ""
+            }
+
+            //We attempt to register the same user, but without all parameters
+            const res = await chai.request.execute(server)
+                .post("/auth/login")
+                .send(test_user);
+
+            //Assertion
+            res.should.have.status(400);
+
+            res.body.should.have.property("message").eql("email or password missing");
+        });
+
+        it('Should fail login if email not in database (login)', async () => {
+            //User tries to login with unregistered email
+            const test_user = {
+                email: "wrong@email.com",
+                password: "justPassword"
+            }
+
+            //Register the same user twice
+            const res = await chai.request.execute(server)
+                .post("/auth/login")
+                .send(test_user);
+
+            //Assertion
+            res.should.have.status(400);
+
+            res.body.should.have.property("message").eql("incorrect username");
+        });
+
+        it('Should fail login if wrong password (login)', async () => {
+            //User submits the wrong password - error handling
+            const test_user = {
+                email: "test@email.com",
+                password: "justPassword"
+            }
+
+            //Register the same user twice
+            const res = await chai.request.execute(server)
+                .post("/auth/login")
+                .send(test_user);
+
+            //Assertion
+            res.should.have.status(400);
+
+            res.body.should.have.property("message").eql("incorrect password");
+        });
+
+        it('Should login the user (login)', async () => {
+            //User login with correct email and password
+            const test_user = {
+                email: "test@email.com",
+                password: "regularPassword"
+            }
+
+            //Register the same user twice
+            const res = await chai.request.execute(server)
+                .post("/auth/login")
+                .send(test_user);
+
+            //Assertion
+            res.should.have.status(201);
+
+            res.body.should.have.property("message").eql("User successfully logged in");
+            res.body.should.have.property("token");
+            jwtToken = res.body.token;
         });
     });
-});
 
-// Check the POST route - ADD a new document
-describe('POST /posts - Add a new document', () => {
-    it('Should add a new document and return 201 status', async () => {
-        const document = {
-            title: "Awesome title",
-            content: "Creative content."
-        };
+    describe('CRUD documents', () => {
+        beforeEach(() => {
+            //Set the jwt token in header.
+            chai.request(server).set("x-access-token", jwtToken);
+        });
 
-        //Add the new document to the database
-        const res = await chai.request.execute(server)
-            .post("/posts")
+        it('Should add document (addOne)', async () => {
+            //Document title and content
+            const document = {
+                title: "Document Title",
+                content: "Document Content"
+            };
+
+            const res = await chai.request.execute(server)
+            .post("/posts/")
             .send(document);
 
-        //Assertion
-        res.should.have.status(201);
-        res.body.should.have.property('message').eql('Document added successfully');
-        res.body.should.have.property('document');
-        res.body.document.should.have.property('_id');
-        res.body.document.should.have.property('title').eql(document.title);
-        res.body.document.should.have.property('content').eql(document.content);
-    });
-});
+            res.should.have.status(201);
+            res.body.should.have.property('message').eql('Document added successfully');
+        });
 
-// Check GET route. can we get the document we added by id?
-describe('GET /posts/:id - Get document with id', () => {
-    it('Should return document with id with status 200', async () => {
-        const db = await database.getDb();
-        const documents = await db.collection.find({}).toArray();
-        const firstDocument = documents[0];
+        it('Should fail if invalid token (addOne)', async () => {
+            chai.request(server).set("x-access-token", oldToken);
 
-        if (!firstDocument) {
-            throw new Error('Database empty. No document to be updated');
-        }
+            const document = {
+                title: "Document Title",
+                content: "Document Content"
+            };
 
-        firstDocument.should.exist;
-        firstDocument.should.have.property('_id');
-        firstDocument.should.have.property('title');
-        firstDocument.should.have.property('content');
+            const res = await chai.request.execute(server)
+            .post("/posts/")
+            .send(document);
 
-        const documentId = firstDocument._id;
-        const documentTitle = firstDocument.title;
-        const documentContent = firstDocument.content;
+            res.should.have.status(401);
+            res.body.should.have.property('message').eql('Token is not valid. Cannot add document to database.');
+        });
 
-        // Get document with the id
-        const res = await chai.request.execute(server)
-            .get(`/posts/${documentId}`);
-        
-        // Assertion
-        res.should.have.status(200);
-        res.body.should.have.property('_id').eql(`${documentId}`);
-        res.body.should.have.property('title').eql(`${documentTitle}`);
-        res.body.should.have.property('content').eql(`${documentContent}`);
-        res.body.should.be.a('object');
-    });
-});
+        it('Should get the users documents (getUsersDocuments)', async () => {
+            const res = await chai.request.execute(server)
+                .post("/posts/get_documents");
+            
+            //Should only be one document
+            res.should.have.status(401);
+            res.should.have.length(1)
+        })
+    })
 
-// Check POST route - UPDATE. can we update the document we added by id?
-describe('POST /posts/update - Update the document by id', () => {
-    it('Should update the document with new content and return status 200', async () => {
-        const db = await database.getDb();
-        const documents = await db.collection.find({}).toArray();
-        const firstDocument = documents[0];
-
-        if (!firstDocument) {
-            throw new Error('Database empty. No document to be updated');
-        }
-
-        const documentId = firstDocument._id.toHexString();
-
-        const updatedDocument = {
-            _id: documentId,
-            title: "A significantly better title",
-            content: "Simply the best content"
-        };
-
-        // Update the document
-        const res = await chai.request.execute(server)
-            .post("/posts/update")
-            .send(updatedDocument);
-
-        // Assertion
-        res.should.have.status(200);
-        res.body.should.have.property('message').eql('Document updated successfully');
-        res.body.should.have.property('id').eql(`${documentId}`);
-        res.request._data.should.have.property('title').eql(`${updatedDocument.title}`);
-        res.request._data.should.have.property('content').eql(`${updatedDocument.content}`);
-        res.body.should.be.a('object');
-    });
-});
-
-// Check DELETE route. Can we destroy what we've created by id?
-describe('DELETE /posts/delete', () => {
-    it('Should delete the document and return status 200', async () => {
-        const db = await database.getDb();
-        const documents = await db.collection.find({}).toArray();
-        const firstDocument = documents[0];
-
-        if (!firstDocument) {
-            throw new Error('Database empty. No document to be deleted');
-        }
-
-        const documentId = firstDocument._id.toHexString();
-
-        // Destroy the document once and for all
-        const res = await chai.request.execute(server)
-            .post(`/posts/delete/${documentId}`);
-
-        // Assertion
-        res.should.have.status(200);
-        res.body.should.have.property('message').eql('Document deleted successfully');
-        res.body.should.have.property('id').eql(documentId);
+    after(async () => {
+        // Close database
+        await db.client.close();
     });
 });

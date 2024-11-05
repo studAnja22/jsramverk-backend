@@ -21,7 +21,7 @@ const documents = {
     getUsersDocuments: async function getUsersDocuments() {
         let db = await database.getDb();
 
-        if( auth.user) {
+        if(auth.user) {
             try {
                 return await db.documents.find({
                 $or: [

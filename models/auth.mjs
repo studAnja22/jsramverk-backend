@@ -70,9 +70,6 @@ const auth = {
             //Save token and user email
             auth.token = token;
             auth.user = userInputEmail;
-            console.log("auth token: ", auth.token);
-            console.log("user: ", userInputEmail);
-            console.log("auth.user: ", auth.user);
 
             return {
                 data: {
