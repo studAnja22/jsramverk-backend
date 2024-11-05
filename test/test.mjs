@@ -59,7 +59,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //Register new user
-            const res = await chai.request.execute(server)
+            const res = await chai.request(server)
                 .post("/users/register_user")
                 .send(test_user);
 
@@ -77,7 +77,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //Register the same user twice
-            const res = await chai.request.execute(server)
+            const res = await chai.request(server)
                 .post("/users/register_user")
                 .send(test_user);
 
@@ -95,7 +95,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //We attempt to register the same user, but without all parameters
-            const res = await chai.request.execute(server)
+            const res = await chai.request(server)
                 .post("/auth/login")
                 .send(test_user);
 
@@ -113,7 +113,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //Register the same user twice
-            const res = await chai.request.execute(server)
+            const res = await chai.request(server)
                 .post("/auth/login")
                 .send(test_user);
 
@@ -131,7 +131,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //Register the same user twice
-            const res = await chai.request.execute(server)
+            const res = await chai.request(server)
                 .post("/auth/login")
                 .send(test_user);
 
@@ -149,7 +149,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //Register the same user twice
-            const res = await chai.request.execute(server)
+            const res = await chai.request(server)
                 .post("/auth/login")
                 .send(test_user);
 
@@ -175,7 +175,7 @@ describe('CRUD Operations Documents & Users', () => {
                 content: "Document Content"
             };
 
-            const res = await chai.request.execute(server)
+            const res = await chai.request(server)
             .post("/posts/")
             .send(document);
 
@@ -191,7 +191,7 @@ describe('CRUD Operations Documents & Users', () => {
                 content: "Document Content"
             };
 
-            const res = await chai.request.execute(server)
+            const res = await chai.request(server)
             .post("/posts/")
             .send(document);
 
@@ -200,12 +200,12 @@ describe('CRUD Operations Documents & Users', () => {
         });
 
         it('Should get the users documents (getUsersDocuments)', async () => {
-            const res = await chai.request.execute(server)
+            const res = await chai.request(server)
                 .post("/posts/get_documents");
             
             //Should only be one document
             res.should.have.status(401);
-            res.should.have.length(1)
+            res.should.have.lengthOf(1)
         })
     })
 
