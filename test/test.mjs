@@ -1,4 +1,3 @@
-
 /* global it describe before */
 
 process.env.NODE_ENV = 'test';
@@ -211,7 +210,7 @@ describe('CRUD Operations Documents & Users', () => {
             
             //Should only be one document
             res.should.have.status(401);
-            res.should.have.lengthOf(1)
+            res.body.should.be.an('array').that.has.lengthOf(1);
         })
     })
 

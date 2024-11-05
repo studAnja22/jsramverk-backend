@@ -29,7 +29,7 @@ router.post("/login", async (req, res) => {
         if (result.data.type == 'success') {
             return res.status(201).json({
                 message: result.data.message,
-                token: res.data.token,
+                token: result.data.token,
             });
         }
     } catch (e) {
