@@ -7,8 +7,8 @@ const database = {
         let dsn;
 
         if (process.env.NODE_ENV === 'test') {
-            // dsn = "mongodb://localhost:27017/test";
-            dsn = "mongodb://0.0.0.0:27017/";
+            dsn = "mongodb://localhost:27017/test";
+
         } else {
             dsn = `mongodb+srv://${process.env.DB_MONGO}:${process.env.DB_PASS}@text-editor.azo43.mongodb.net/?retryWrites=true&w=majority&appName=text-editor`;
         }

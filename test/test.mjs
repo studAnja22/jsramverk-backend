@@ -23,7 +23,13 @@ let db = "";
 describe('CRUD Operations Documents & Users', () => {
     // Reset database and setup for the tests
     before(async () => {
-        db = await database.getDb();
+        //Trying to access the database
+        try {
+            db = await database.getDb();
+            console.log("Database initialized:", db);
+        } catch (e) {
+            console.error("Error during database initialization:", e);
+        }
 
         try {
             //Get all collections and drop them.
