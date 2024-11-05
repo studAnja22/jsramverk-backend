@@ -30,6 +30,7 @@ const database = {
             const users = db.collection("users");
 
             return {
+                db: db,
                 documents: documents,
                 users: users,
                 client: client,
