@@ -3,11 +3,11 @@
 
 process.env.NODE_ENV = 'test';
 
-import * as chaiModule from "chai";
-import chaiHttp from 'chai-http/index.js';
+import chai from 'chai';
+import chaiHttp from 'chai-http';
 import server from "../app.mjs";
 
-const chai = chaiModule.use(chaiHttp);
+chai.use(chaiHttp);
 
 chai.should();
 
@@ -18,11 +18,11 @@ const collectionNameDocuments = "test_document";
 const collectionNameUsers = "test_user";
 let jwtToken = "";
 let oldToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkhlbGxvWW91QGVtYWlsLmNvbSIsImlhdCI6MTczMDc0MzAwMCwiZXhwIjoxNzMwNzQ2NjAwfQ.zJ29H0w1hgi7QsXiE4zaZGn80sTjnBxvq3i8leIk488";
+let db = "";
 
 describe('CRUD Operations Documents & Users', () => {
     // Reset database and setup for the tests
     before(async () => {
-        let db;
         db = await database.getDb();
 
         try {
