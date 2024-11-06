@@ -2,11 +2,11 @@
 
 process.env.NODE_ENV = 'test';
 
-import * as chai from 'chai';
+import * as chaiModule from 'chai';
 import chaiHttp from 'chai-http';
 import server from "../app.mjs";
 
-chai.use(chaiHttp);
+const chai = chaiModule.use(chaiHttp);
 
 chai.should();
 
@@ -64,7 +64,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //Register new user
-            const res = await chai.request(server)
+            const res = await chai.request.execute(server)
                 .post("/users/register_user")
                 .send(test_user);
 
@@ -82,7 +82,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //Register the same user twice
-            const res = await chai.request(server)
+            const res = await chai.request.execute(server)
                 .post("/users/register_user")
                 .send(test_user);
 
@@ -100,7 +100,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //We attempt to register the same user, but without all parameters
-            const res = await chai.request(server)
+            const res = await chai.request.execute(server)
                 .post("/auth/login")
                 .send(test_user);
 
@@ -118,7 +118,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //Register the same user twice
-            const res = await chai.request(server)
+            const res = await chai.request.execute(server)
                 .post("/auth/login")
                 .send(test_user);
 
@@ -136,7 +136,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //Register the same user twice
-            const res = await chai.request(server)
+            const res = await chai.request.execute(server)
                 .post("/auth/login")
                 .send(test_user);
 
@@ -154,7 +154,7 @@ describe('CRUD Operations Documents & Users', () => {
             }
 
             //Register the same user twice
-            const res = await chai.request(server)
+            const res = await chai.request.execute(server)
                 .post("/auth/login")
                 .send(test_user);
 
@@ -170,7 +170,7 @@ describe('CRUD Operations Documents & Users', () => {
     describe('CRUD documents', () => {
         beforeEach(() => {
             //Set the jwt token in header.
-            chai.request(server).set("x-access-token", jwtToken);
+            chai.request.execute(server).set("x-access-token", jwtToken);
         });
 
         it('Should add document (addOne)', async () => {
@@ -180,7 +180,7 @@ describe('CRUD Operations Documents & Users', () => {
                 content: "Document Content"
             };
 
-            const res = await chai.request(server)
+            const res = await chai.request.execute(server)
             .post("/posts/")
             .send(document);
 
@@ -189,14 +189,14 @@ describe('CRUD Operations Documents & Users', () => {
         });
 
         it('Should fail if invalid token (addOne)', async () => {
-            chai.request(server).set("x-access-token", oldToken);
+            chai.request.execute(server).set("x-access-token", oldToken);
 
             const document = {
                 title: "Document Title",
                 content: "Document Content"
             };
 
-            const res = await chai.request(server)
+            const res = await chai.request.execute(server)
             .post("/posts/")
             .send(document);
 
@@ -205,7 +205,7 @@ describe('CRUD Operations Documents & Users', () => {
         });
 
         it('Should get the users documents (getUsersDocuments)', async () => {
-            const res = await chai.request(server)
+            const res = await chai.request.execute(server)
                 .post("/posts/get_documents");
             
             //Should only be one document
