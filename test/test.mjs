@@ -90,7 +90,7 @@ describe('CRUD Operations Documents & Users', () => {
             //Assertion
             res.should.have.status(400);
 
-            res.body.should.have.property("message").eql("Email already in use");
+            res.body.should.have.property("message").eql("Error: Email already in use");
         });
 
         it('Should fail if no password is provided (login)', async () => {
