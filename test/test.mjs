@@ -2,7 +2,7 @@
 
 process.env.NODE_ENV = 'test';
 
-import { chai as chaiModule} from 'chai';
+import * as chaiModule from 'chai';
 import chaiHttp from 'chai-http';
 import { describe } from "mocha";
 
