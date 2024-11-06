@@ -225,7 +225,7 @@ const documents = {
         let db = await database.getDb();
 
         const currentTime = timestamp.getCurrentTime();
-        const filter = { _id: ObjectId.createFromHexString(body["_id"]) };
+        const filter = { _id: ObjectId.createFromHexString(id) };
         const setCodeMode = {
             $set: {
                 code_mode: true,
@@ -248,7 +248,7 @@ const documents = {
         let db = await database.getDb();
 
         const currentTime = timestamp.getCurrentTime();
-        const filter = { _id: ObjectId.createFromHexString(body["_id"]) };
+        const filter = { _id: ObjectId.createFromHexString(id) };
         const setCodeMode = {
             $set: {
                 code_mode: false,

@@ -166,4 +166,36 @@ router.delete("/delete/:id", async (req, res) => {
     
 });
 
+// Activate code mode
+router.post("/activate_code/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const result = await documents.activateCodeMode(id);
+
+        if (result) {
+            return res.json({ message: "Code mode has been activated"} );
+        }
+    } catch (e) {
+        console.error("Error trying to activate code mode: ", e);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+// Deactivate code mode
+router.post("/deactivate_code/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const result = await documents.deactivateCodeMode(id);
+
+        if (result) {
+            return res.json({ message: "Code mode has been activated"} );
+        }
+    } catch (e) {
+        console.error("Error trying to activate code mode: ", e);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 export default router;
