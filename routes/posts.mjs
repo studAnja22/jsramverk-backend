@@ -152,7 +152,7 @@ router.delete("/remove_collaborator", async (req, res) => {
 });
 
 // delete a document
-router.post("/delete/:id", async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
     try {
         const id = req.params.id;
 

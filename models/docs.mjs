@@ -74,6 +74,13 @@ const documents = {
         }
         const currentTime = timestamp.getCurrentTime();
 
+        if (!auth.user) {
+            console.error("Something went wrong trying to add document. No user found.")
+            return res.status(401).json({
+                message: "Owner not found. Cannot add document to database."
+            });;
+        }
+
         let db = await database.getDb();
         let data = {
             title: req.body.title,
@@ -86,7 +93,7 @@ const documents = {
         }
 
         try {
-            await db.documents.insertOne(data);
+            return await db.documents.insertOne(data);
         } catch (e) {
             console.error("Error during addOne operation:", e);
             throw new Error("Internal server Error");
