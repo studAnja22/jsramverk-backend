@@ -191,7 +191,8 @@ describe('CRUD Operations Documents & Users', () => {
         });
 
         it('Should fail if invalid token (addOne)', async () => {
-            chai.request.execute(server).set("x-access-token", oldToken);
+            // chai.request.execute(server).set("x-access-token", oldToken);
+            chai.request(server).set('Authorization', 'JWT ' + oldToken);
 
             const document = {
                 title: "Document Title",
