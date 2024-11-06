@@ -171,7 +171,8 @@ describe('CRUD Operations Documents & Users', () => {
     describe('CRUD documents', () => {
         beforeEach(() => {
             //Set the jwt token in header.
-            chai.request.execute(server).set("x-access-token", jwtToken);
+            // chai.request.execute(server).set("x-access-token", jwtToken);
+            chai.request(server).set('Authorization', 'JWT ' + jwtToken);
         });
 
         it('Should add document (addOne)', async () => {
