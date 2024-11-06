@@ -190,7 +190,7 @@ router.post("/deactivate_code/:id", async (req, res) => {
         const result = await documents.deactivateCodeMode(id);
 
         if (result) {
-            return res.json({ message: "Code mode has been activated"} );
+            return res.json({ message: "Code mode has been deactivated"} );
         }
     } catch (e) {
         console.error("Error trying to activate code mode: ", e);

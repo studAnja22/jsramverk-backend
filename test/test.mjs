@@ -30,17 +30,17 @@ describe('CRUD Operations Documents & Users', () => {
         } catch (e) {
             console.error("Error during database initialization:", e);
         }
-
-        try {
+        if (db) {
+            try {
             //Get all collections and drop them.
             const collections = await db.listCollections().toArray();
 
             for (const collectionInfo of collections) {
                 await db.collection(collectionInfo.name).drop();
             }
-        } catch (e) {
-            console.error("Error occurred while trying to drop test collections", e);
-        }
+            } catch (e) {
+                console.error("Error occurred while trying to drop test collections", e);
+            }
 
         try {
             //Create test collections for documents and users
@@ -51,9 +51,10 @@ describe('CRUD Operations Documents & Users', () => {
                 await db.createCollection(collectionNameDocuments);
                 await db.createCollection(collectionNameUsers);
             }
-        } catch (e) {
-            console.error("Error occurred while trying to create test collections", e);
-        }
+            } catch (e) {
+                console.error("Error occurred while trying to create test collections", e);
+            }
+            }
     });
 
     describe('User Registration', () => {
