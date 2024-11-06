@@ -2,16 +2,17 @@
 
 process.env.NODE_ENV = 'test';
 
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const { describe } = require("mocha");
+import * as chaiModule from 'chai';
+import chaiHttp from 'chai-http';
+import { describe } from "mocha";
 
-const server = require("../app.mjs");
-const database = require("../db/database.mjs");
+import server from "../app.mjs";
+
+const chai = chaiModule.use(chaiHttp);
 
 chai.should();
 
-chai.use(chaiHttp);
+import database from "../db/database.mjs";
 
 const collectionNameDocuments = "test_document";
 const collectionNameUsers = "test_user";
