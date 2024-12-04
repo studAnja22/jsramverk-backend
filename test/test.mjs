@@ -33,10 +33,10 @@ describe('CRUD Operations Documents & Users', () => {
 
         try {
             //Get all collections and drop them.
-            const collections = await db.listCollections().toArray();
+            const collections = await db.db.listCollections().toArray();
 
             for (const collectionInfo of collections) {
-                await db.collection(collectionInfo.name).drop();
+                await db.db.collection(collectionInfo.name).drop();
             }
         } catch (e) {
             console.error("Error occurred while trying to drop test collections", e);
@@ -44,12 +44,12 @@ describe('CRUD Operations Documents & Users', () => {
 
         try {
             //Create test collections for documents and users
-            const collectionDocumentsExists = await db.listCollections({ name: collectionNameDocuments }).hasNext();
-            const collectionUsersExists = await db.listCollections({ name: collectionNameUsers }).hasNext();
+            const collectionDocumentsExists = await db.db.listCollections({ name: collectionNameDocuments }).hasNext();
+            const collectionUsersExists = await db.db.listCollections({ name: collectionNameUsers }).hasNext();
 
             if (!collectionDocumentsExists && !collectionUsersExists) {
-                await db.createCollection(collectionNameDocuments);
-                await db.createCollection(collectionNameUsers);
+                await db.db.createCollection(collectionNameDocuments);
+                await db.db.createCollection(collectionNameUsers);
             }
         } catch (e) {
             console.error("Error occurred while trying to create test collections", e);
@@ -192,7 +192,7 @@ describe('CRUD Operations Documents & Users', () => {
 
         it('Should fail if invalid token (addOne)', async () => {
             // chai.request.execute(server).set("x-access-token", oldToken);
-            chai.request(server).set('Authorization', 'JWT ' + oldToken);
+            chai.request.execute(server).set('Authorization', 'JWT ' + oldToken);//den verkar inte gilla set...
 
             const document = {
                 title: "Document Title",
