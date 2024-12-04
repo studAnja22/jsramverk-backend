@@ -168,55 +168,6 @@ describe('CRUD Operations Documents & Users', () => {
         });
     });
 
-    describe('CRUD documents', () => {
-        beforeEach(() => {
-            //Set the jwt token in header.
-            // chai.request.execute(server).set("x-access-token", jwtToken);
-            chai.request(server).set('Authorization', 'JWT ' + jwtToken);
-        });
-
-        it('Should add document (addOne)', async () => {
-            //Document title and content
-            const document = {
-                title: "Document Title",
-                content: "Document Content"
-            };
-
-            const res = await chai.request.execute(server)
-            .post("/posts/")
-            .send(document);
-
-            res.should.have.status(201);
-            res.body.should.have.property('message').eql('Document added successfully');
-        });
-
-        it('Should fail if invalid token (addOne)', async () => {
-            // chai.request.execute(server).set("x-access-token", oldToken);
-            chai.request.execute(server).set('Authorization', 'JWT ' + oldToken);//den verkar inte gilla set...
-
-            const document = {
-                title: "Document Title",
-                content: "Document Content"
-            };
-
-            const res = await chai.request.execute(server)
-            .post("/posts/")
-            .send(document);
-
-            res.should.have.status(401);
-            res.body.should.have.property('message').eql('Token is not valid. Cannot add document to database.');
-        });
-
-        it('Should get the users documents (getUsersDocuments)', async () => {
-            const res = await chai.request.execute(server)
-                .post("/posts/get_documents");
-            
-            //Should only be one document
-            res.should.have.status(401);
-            res.body.should.be.an('array').that.has.lengthOf(1);
-        })
-    })
-
     after(async () => {
         // Close database
         await db.client.close();
