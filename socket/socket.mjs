@@ -7,7 +7,7 @@ let timeout;
 function initSocket(httpServer) {
     const io = new Server(httpServer, {
         cors: {
-            origin: "http://localhost:3000",
+            origin: "https://www.student.bth.se/~emek22/editor/",
             methods: ["GET", "POST"]
         }
     });

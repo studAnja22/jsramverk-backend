@@ -33,7 +33,7 @@ router.post("/register_user", async (req, res) => {
     }
 });
 //Deletes the user, all their documents and removes them from any collaborations
-router.delete("/deregister_user", async (req, res) => {
+router.post("/deregister_user", async (req, res) => {
     try {
         await users.deregister(req, res);
     } catch (e) {

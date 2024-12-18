@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-const port = process.env.PORT || 1337;;
+const port = process.env.PORT || 1337;
 /**---- import packages ----*/
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -19,7 +19,7 @@ import { createServer } from 'node:http';
 import posts from "./routes/posts.mjs";//document routes
 import users from './routes/usersRoutes.mjs';//user routes
 import authRoutes from "./routes/authRoutes.mjs"; //auth routes
-import sendGrid from "./routes/sendGrid.mjs" // send invites with sendgrid route
+import sendGrid from "./routes/sendGrid.mjs"; // send invites with sendgrid route
 
 /**------- Express settings -------*/
 const app = express();

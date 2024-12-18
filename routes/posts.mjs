@@ -36,8 +36,8 @@ router.post("/", async (req, res) => {
 
 // Get jwt token
 router.get("/token", (req, res) => {
-    let token = req.headers['x-access-token'];
-    
+    let token = req.headers['x-access-token'] || auth.token;
+
     if (token) {
         return res.json({
             message: "Token found",
@@ -135,7 +135,7 @@ router.post("/update_collaborator", async (req, res) => {
 });
 
 // Removes a collaborator from allowed_users
-router.delete("/remove_collaborator", async (req, res) => {
+router.post("/remove_collaborator", async (req, res) => {
     try {
         const userExists = await documents.removeCollaborator(req.body);
 
@@ -152,7 +152,7 @@ router.delete("/remove_collaborator", async (req, res) => {
 });
 
 // delete a document
-router.delete("/delete/:id", async (req, res) => {
+router.post("/delete/:id", async (req, res) => {
     try {
         const id = req.params.id;
 

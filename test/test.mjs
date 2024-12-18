@@ -26,7 +26,9 @@ describe('CRUD Operations Documents & Users', () => {
         //Trying to access the database
         try {
             db = await database.getDb();
-            console.log("Database initialized:", db);
+            if (!db) {
+                throw new Error("Failed to initialize database connection :(");
+            }
         } catch (e) {
             console.error("Error during database initialization:", e);
         }
