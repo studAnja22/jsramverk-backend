@@ -48,7 +48,6 @@ app.use((req, res, next) => {
         "/auth/login",
         "/auth",
         "/users/register_user",
-        "/posts/token",
         "/sendGrid/invite_user"
     ];
 
