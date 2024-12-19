@@ -1,6 +1,6 @@
 import database from '../db/database.mjs';
 import auth from './auth.mjs';
-import timestamp from './timestamp.mjs';
+import timestamp from '../utils/timestamp.mjs';
 import { ObjectId } from 'mongodb';
 
 const documents = {
@@ -74,7 +74,7 @@ const documents = {
         }
         const currentTime = timestamp.getCurrentTime();
 
-        if (!auth.user) {
+        if (!req.body.user) {
             console.error("Something went wrong trying to add document. No user found.")
             return res.status(401).json({
                 message: "Owner not found. Cannot add document to database."
@@ -85,7 +85,7 @@ const documents = {
         let data = {
             title: req.body.title,
             content: req.body.content,
-            owner: auth.user,
+            owner: req.body.user,
             code_mode: false,
             allowed_users: [],
             created: currentTime,

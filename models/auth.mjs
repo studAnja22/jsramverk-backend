@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 import database from '../db/database.mjs';
-import users from '../models/users.mjs';
+import loginHelper from '../utils/loginHelper.mjs';
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -13,32 +13,9 @@ const auth = {
         const userInputEmail = body.email;
         const userInputPassword = body.password;
 
-        //Check if user submitted email and password
-        if (!userInputEmail || !userInputPassword) {
-            return {
-                data: {
-                    type: "fail",
-                    message: "email or password missing",
-                    user: {
-                        email: userInputEmail
-                    }
-                }
-            }
-        }
-        //Check if user in db
-        const userExists = await users.emailExists(body);
-        //Email not found in database - return.
-        if (!userExists) {
-            return {
-                data: {
-                    type: "fail",
-                    message: "incorrect username",
-                    user: {
-                        email: userInputEmail
-                    }
-                }
-            }
-        }
+        //Check if user user submitted both username and password and if user are in database
+        loginHelper.checkUserInput(body);
+        loginHelper.doesUserExist(body);
 
         let db;
         let storedHashedPassword;

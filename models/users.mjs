@@ -1,6 +1,6 @@
 import database from '../db/database.mjs';
 import bcrypt from 'bcryptjs';
-import timestamp from './timestamp.mjs';
+import timestamp from '../utils/timestamp.mjs';
 import auth from './auth.mjs';
 
 const saltRounds = parseInt(process.env.SALT_ROUNDS) || 10;
