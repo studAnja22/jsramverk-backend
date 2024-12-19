@@ -87,10 +87,7 @@ const user = {
             await user.removeFromCollaborations(email);
             await user.removeUser(email);
             await user.removeAllUsersDocuments(email);
-            if (res.status(200)) {
-                auth.token = "";
-                auth.user = "";
-            }
+
             return res.status(200).json({ message: "User deregistered successfully." });
         } catch (e) {
             console.error("Error during deregistration:", error);
