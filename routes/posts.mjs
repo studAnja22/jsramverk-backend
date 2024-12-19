@@ -6,9 +6,10 @@ import auth from '../models/auth.mjs';
 import { ObjectId } from 'mongodb';
 
 // Get user documents
-router.get('/get_documents', async (req, res) => {
+router.get('/get_documents/:user', async (req, res) => {
     try {
-        const docs = await documents.getUsersDocuments();
+        const user = req.params.user;
+        const docs = await documents.getUsersDocuments(user);
 
         return res.json(docs);
     } catch (e) {
@@ -33,25 +34,6 @@ router.post("/", async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
-
-// Get jwt token
-router.get("/token", (req, res) => {
-    let token = req.headers['x-access-token'] || auth.token;
-
-    if (token) {
-        return res.json({
-            message: "Token found",
-            token: token,
-            user: auth.user
-        });
-    }
-
-    return res.status(401).json({
-        message: "Token not found",
-        token: "",
-        user: ""
-    });
-})
 
 // Get one document
 router.get('/:id', async (req, res) => {

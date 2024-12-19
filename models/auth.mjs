@@ -9,8 +9,6 @@ import jwt from 'jsonwebtoken';
 const jwtSecret = process.env.JWT_SECRET;
 
 const auth = {
-    token: "",
-    user: "",
     login: async function login(body) {
         const userInputEmail = body.email;
         const userInputPassword = body.password;
@@ -67,9 +65,6 @@ const auth = {
             const payload = { email: userInputEmail };
 
             const token = jwt.sign(payload, jwtSecret, { expiresIn: '1h'});
-            //Save token and user email
-            auth.token = token;
-            auth.user = userInputEmail;
 
             return {
                 data: {
@@ -117,8 +112,6 @@ const auth = {
         //No Token
         if (!token) {
             //Ensure these are empty
-            auth.token = "";
-            auth.user = "";
             return res.status(401).json({
                 errors: {
                     status: 401,
@@ -137,13 +130,13 @@ const auth = {
                     errors: {
                         status: 500,
                         source: req.path,
-                        title: "Failed authentication",
+                        title: "Invalid Token",
                         detail: e.message
                     }
                 });
             }
             // Valid token proceed to next route
-            req.user = { email: decoded.email};
+            req.user = { email: decoded.email };
             return next();
         });
     },
@@ -153,22 +146,15 @@ const auth = {
         if (token) {
             try {
                 jwt.verify(token, jwtSecret);
-                // Token is valid
-                return true;
+                return true;// valid token
             } catch (e) {
-                // Token invalid
                 console.error("Invalid token.");
-                return false;
+                return false;// invalid token
             }
         } else {
-            // No token saved
             console.error("No token found.")
-            return false;
+            return false;// No token
         }
-    },
-    logout: function logout() {
-        auth.token = "";
-        auth.user = "";
     }
 }
 

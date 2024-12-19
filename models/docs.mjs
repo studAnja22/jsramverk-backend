@@ -18,15 +18,15 @@ const documents = {
             await db.client.close();
         }
     },
-    getUsersDocuments: async function getUsersDocuments() {
+    getUsersDocuments: async function getUsersDocuments(user) {
         let db = await database.getDb();
 
-        if(auth.user) {
+        if(user) {
             try {
                 return await db.documents.find({
                 $or: [
-                    { owner: auth.user },
-                    { allowed_users: auth.user }
+                    { owner: user },
+                    { allowed_users: user }
                     ]
                 }).toArray();
             } catch (e) {

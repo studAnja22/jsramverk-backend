@@ -30,6 +30,7 @@ router.post("/login", async (req, res) => {
             return res.status(201).json({
                 message: result.data.message,
                 token: result.data.token,
+                user: result.data.user.email
             });
         }
     } catch (e) {
@@ -39,8 +40,6 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/logout", async (req, res) => {
-    auth.logout();
-
     return res.status(201).json({ message: "User successfully logged out"});
 });
 

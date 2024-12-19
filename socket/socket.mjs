@@ -7,14 +7,19 @@ let timeout;
 function initSocket(httpServer) {
     const io = new Server(httpServer, {
         cors: {
-            origin: "https://www.student.bth.se/~emek22/editor/",
+            origin: "https://www.student.bth.se",
             methods: ["GET", "POST"]
         }
     });
 
     io.on('connection', (socket) => {
-    socket.on("join_room", (room) => {
-        socket.join(room);
+        console.log('Connection from origin:', socket.handshake.headers.origin);
+
+        socket.on('disconnect', () => {
+            console.log('Client disconnected');
+        });
+        socket.on("join_room", (room) => {
+            socket.join(room);
     });
 
     socket.on("content", (data) => {
